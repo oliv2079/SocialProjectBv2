@@ -1,0 +1,859 @@
+{
+  "latest_gini_year": 2024,
+  "latest_poverty_year": 2024,
+  "national_latest": {
+    "Year": 2024,
+    "Gini": 30.43,
+    "P90P10": 3.24,
+    "S80S20": 4.65,
+    "Poverty60": 13.3
+  },
+  "regressions": [
+    {
+      "Year": 2024,
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": -0.030783391737938526,
+      "intercept": 12.46627168230884,
+      "r": -0.04528379771109113,
+      "r2": 0.002050622335139022,
+      "p_value": 0.6579377507220961
+    },
+    {
+      "Year": 2024,
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.14250926611868525,
+      "intercept": 0.9747529059573674,
+      "r": 0.7271739804055406,
+      "r2": 0.5287819977788375,
+      "p_value": 2.284651822812115e-17
+    },
+    {
+      "Year": 2024,
+      "x": "Poverty60",
+      "y": "LifeExpectancy",
+      "n": 94,
+      "slope": -0.20221286164928745,
+      "intercept": 83.83612151846121,
+      "r": -0.6265688157499129,
+      "r2": 0.3925884808702482,
+      "p_value": 1.4296665706352365e-11
+    },
+    {
+      "Year": 2024,
+      "x": "Gini",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": -0.021782306568862573,
+      "intercept": 3.231607672617946,
+      "r": -0.1635029021798102,
+      "r2": 0.026733199021220583,
+      "p_value": 0.10768761855708625
+    },
+    {
+      "Year": 2024,
+      "x": "Gini",
+      "y": "TertiaryShare",
+      "n": 98,
+      "slope": 1.1666389853655579,
+      "intercept": 0.8670835570214805,
+      "r": 0.5869621092035973,
+      "r2": 0.34452451764073566,
+      "p_value": 2.1267121564235205e-10
+    },
+    {
+      "Year": 2024,
+      "x": "Gini",
+      "y": "LifeExpectancy",
+      "n": 94,
+      "slope": 0.09867781699509554,
+      "intercept": 78.77732554617931,
+      "r": 0.466184070605608,
+      "r2": 0.21732758768641453,
+      "p_value": 2.186146769123936e-06
+    }
+  ],
+  "correlation_over_time": [
+    {
+      "Year": 2000,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.03824899285878057,
+      "intercept": 7.782799062991164,
+      "r": 0.043720266516191535,
+      "r2": 0.0019114617042468186,
+      "p_value": 0.6690444125056604
+    },
+    {
+      "Year": 2001,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.1042330584495973,
+      "intercept": 6.401813717682531,
+      "r": 0.10297274267960534,
+      "r2": 0.010603385734960214,
+      "p_value": 0.3129822637357055
+    },
+    {
+      "Year": 2002,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.13157761263733805,
+      "intercept": 5.288644288377987,
+      "r": 0.13201616481708073,
+      "r2": 0.017428267773010625,
+      "p_value": 0.19504275251920966
+    },
+    {
+      "Year": 2003,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.17157427121396535,
+      "intercept": 4.410747927145458,
+      "r": 0.17589029328146147,
+      "r2": 0.03093739527063853,
+      "p_value": 0.0831992149427222
+    },
+    {
+      "Year": 2004,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.23710836404882948,
+      "intercept": 3.489523993240203,
+      "r": 0.21619058699703547,
+      "r2": 0.04673836990612276,
+      "p_value": 0.032510942717458136
+    },
+    {
+      "Year": 2005,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.13742521437959182,
+      "intercept": 5.873864625541833,
+      "r": 0.1466856577320864,
+      "r2": 0.021516682184294797,
+      "p_value": 0.14950242982720413
+    },
+    {
+      "Year": 2006,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.14362754274383888,
+      "intercept": 5.4635237770316865,
+      "r": 0.16608213597572496,
+      "r2": 0.027583275890259197,
+      "p_value": 0.10217354893708326
+    },
+    {
+      "Year": 2007,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.11624637296880848,
+      "intercept": 6.114150403173571,
+      "r": 0.14985755279234228,
+      "r2": 0.022457286128909654,
+      "p_value": 0.14080216359281827
+    },
+    {
+      "Year": 2008,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.18883204449382854,
+      "intercept": 4.79694095555566,
+      "r": 0.25925475402289383,
+      "r2": 0.06721302748347119,
+      "p_value": 0.009943264924805668
+    },
+    {
+      "Year": 2009,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.21821707420740333,
+      "intercept": 4.431751038512965,
+      "r": 0.2837380762203929,
+      "r2": 0.08050729589724948,
+      "p_value": 0.0046365325843988735
+    },
+    {
+      "Year": 2010,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.16392931005250141,
+      "intercept": 5.863746959067317,
+      "r": 0.20344123158141753,
+      "r2": 0.04138833470736396,
+      "p_value": 0.044517090063442545
+    },
+    {
+      "Year": 2011,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.18827140506363604,
+      "intercept": 5.2655247413991235,
+      "r": 0.21216802237847848,
+      "r2": 0.04501526971999455,
+      "p_value": 0.035962714232693496
+    },
+    {
+      "Year": 2012,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.21715588977251557,
+      "intercept": 4.26859323166904,
+      "r": 0.2400564421274292,
+      "r2": 0.057627095406879755,
+      "p_value": 0.017271704447120916
+    },
+    {
+      "Year": 2013,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.1945285825558322,
+      "intercept": 5.040759273410458,
+      "r": 0.2122567120773732,
+      "r2": 0.045052911821896906,
+      "p_value": 0.035883418868237364
+    },
+    {
+      "Year": 2014,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.13537434507054158,
+      "intercept": 6.988376414978977,
+      "r": 0.1565178783674473,
+      "r2": 0.024497846248647027,
+      "p_value": 0.12378723684695968
+    },
+    {
+      "Year": 2015,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.11114892221466348,
+      "intercept": 7.880490471532202,
+      "r": 0.1388474168755966,
+      "r2": 0.019278605173025706,
+      "p_value": 0.17272564990826414
+    },
+    {
+      "Year": 2016,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.09611184563810855,
+      "intercept": 8.858612896277775,
+      "r": 0.11618296806527285,
+      "r2": 0.013498482068456212,
+      "p_value": 0.25459532142235713
+    },
+    {
+      "Year": 2017,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.11251755412632596,
+      "intercept": 8.805056825480223,
+      "r": 0.12980417561552976,
+      "r2": 0.01684912400722729,
+      "p_value": 0.20269683929244767
+    },
+    {
+      "Year": 2018,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.11773438407144633,
+      "intercept": 8.612631162248167,
+      "r": 0.13403869492176232,
+      "r2": 0.01796637173632927,
+      "p_value": 0.18822884728313471
+    },
+    {
+      "Year": 2019,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.0714393110955663,
+      "intercept": 9.665798606862698,
+      "r": 0.0854781912463481,
+      "r2": 0.007306521178747262,
+      "p_value": 0.4026673762540184
+    },
+    {
+      "Year": 2020,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.09523866887402523,
+      "intercept": 9.346923281193995,
+      "r": 0.10333139947698954,
+      "r2": 0.010677378117873193,
+      "p_value": 0.3112907679638584
+    },
+    {
+      "Year": 2021,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.043199623213815194,
+      "intercept": 10.81908084836365,
+      "r": 0.05143094921175529,
+      "r2": 0.0026451425368221523,
+      "p_value": 0.6150058181911695
+    },
+    {
+      "Year": 2022,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": 0.07985728919990688,
+      "intercept": 9.399950412144857,
+      "r": 0.10481147840867071,
+      "r2": 0.010985446006211246,
+      "p_value": 0.30437332158323066
+    },
+    {
+      "Year": 2023,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": -0.010597405201103952,
+      "intercept": 11.70674786986574,
+      "r": -0.018426553704597472,
+      "r2": 0.00033953788142841485,
+      "p_value": 0.8570831881735214
+    },
+    {
+      "Year": 2024,
+      "relationship": "Gini vs Poverty60",
+      "x": "Gini",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": -0.030783391737938526,
+      "intercept": 12.46627168230884,
+      "r": -0.04528379771109113,
+      "r2": 0.002050622335139022,
+      "p_value": 0.6579377507220961
+    },
+    {
+      "Year": 2007,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.3037960114293233,
+      "intercept": 0.6282821509863927,
+      "r": 0.6291076570075226,
+      "r2": 0.3957764441054947,
+      "p_value": 3.998621081849904e-12
+    },
+    {
+      "Year": 2008,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.23523906752510415,
+      "intercept": 0.1577018507788699,
+      "r": 0.6270166290063587,
+      "r2": 0.39314985305049766,
+      "p_value": 4.939799830305005e-12
+    },
+    {
+      "Year": 2009,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.2531760720223346,
+      "intercept": 2.0974076455765016,
+      "r": 0.539656586761894,
+      "r2": 0.29122923163549763,
+      "p_value": 9.809268304418797e-09
+    },
+    {
+      "Year": 2010,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.2565455838549941,
+      "intercept": 3.3516239335376103,
+      "r": 0.523273506947277,
+      "r2": 0.273815163072902,
+      "p_value": 3.237038897950196e-08
+    },
+    {
+      "Year": 2011,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.24833027896052975,
+      "intercept": 3.2975783435446573,
+      "r": 0.5118730302173012,
+      "r2": 0.2620139990638422,
+      "p_value": 7.163320459758645e-08
+    },
+    {
+      "Year": 2012,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.261210543398875,
+      "intercept": 3.328246003026508,
+      "r": 0.5441635809860903,
+      "r2": 0.2961140028716053,
+      "p_value": 6.983662134853968e-09
+    },
+    {
+      "Year": 2013,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.2727745726028706,
+      "intercept": 2.836547911682599,
+      "r": 0.6371976077742652,
+      "r2": 0.40602079135324626,
+      "p_value": 1.738428948973244e-12
+    },
+    {
+      "Year": 2014,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.2518287108254295,
+      "intercept": 2.1326420975937936,
+      "r": 0.6882130155938659,
+      "r2": 0.4736371548328028,
+      "p_value": 4.88479143958264e-15
+    },
+    {
+      "Year": 2015,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.24263264865338308,
+      "intercept": 1.7241698239607701,
+      "r": 0.7015521281056403,
+      "r2": 0.4921753884495527,
+      "p_value": 8.57852907705642e-16
+    },
+    {
+      "Year": 2016,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.22485885570759906,
+      "intercept": 1.3432915662044533,
+      "r": 0.6973571692558618,
+      "r2": 0.4863070215125486,
+      "p_value": 1.49771288967693e-15
+    },
+    {
+      "Year": 2017,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.19443042029505256,
+      "intercept": 1.7399329584864738,
+      "r": 0.7090095096815517,
+      "r2": 0.5026944848188745,
+      "p_value": 3.109265102019714e-16
+    },
+    {
+      "Year": 2018,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.19799653959502386,
+      "intercept": 1.3749038120717763,
+      "r": 0.716852201958082,
+      "r2": 0.5138770794521508,
+      "p_value": 1.0326636074520791e-16
+    },
+    {
+      "Year": 2019,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.18954680982097916,
+      "intercept": 1.2707332269773848,
+      "r": 0.7641585471789584,
+      "r2": 0.5839382852266564,
+      "p_value": 5.532977174558774e-20
+    },
+    {
+      "Year": 2020,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.20308973581629194,
+      "intercept": 1.91926067611894,
+      "r": 0.6951027047918118,
+      "r2": 0.4831677702088927,
+      "p_value": 2.0127257325215283e-15
+    },
+    {
+      "Year": 2021,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.17439542845722364,
+      "intercept": 1.2840247998157848,
+      "r": 0.6531129480441912,
+      "r2": 0.42655652290297436,
+      "p_value": 3.1366406622522513e-13
+    },
+    {
+      "Year": 2022,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.13119125120040598,
+      "intercept": 0.8284560481868677,
+      "r": 0.6707550306259645,
+      "r2": 0.4499123111100386,
+      "p_value": 4.1550824681316546e-14
+    },
+    {
+      "Year": 2023,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.13947921464295435,
+      "intercept": 0.9645215613263931,
+      "r": 0.68035695849118,
+      "r2": 0.4628855909673693,
+      "p_value": 1.3035924806923878e-14
+    },
+    {
+      "Year": 2024,
+      "relationship": "Poverty60 vs UnemploymentRate",
+      "x": "Poverty60",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": 0.14250926611868525,
+      "intercept": 0.9747529059573674,
+      "r": 0.7271739804055406,
+      "r2": 0.5287819977788375,
+      "p_value": 2.284651822812115e-17
+    }
+  ],
+  "benchmark_distribution_stats": [
+    {
+      "metric": "Gini",
+      "year": 1987,
+      "count": 98,
+      "min": 15.9,
+      "q1": 20.09,
+      "median": 20.875,
+      "q3": 21.5625,
+      "max": 31.1,
+      "mean": 21.023061224489794
+    },
+    {
+      "metric": "Gini",
+      "year": 2000,
+      "count": 98,
+      "min": 19.58,
+      "q1": 21.3375,
+      "median": 22.08,
+      "q3": 22.8375,
+      "max": 37.57,
+      "mean": 22.752551020408163
+    },
+    {
+      "metric": "Gini",
+      "year": 2010,
+      "count": 98,
+      "min": 21.65,
+      "q1": 23.73,
+      "median": 24.735,
+      "q3": 25.7775,
+      "max": 43.42,
+      "mean": 25.48091836734694
+    },
+    {
+      "metric": "Gini",
+      "year": 2024,
+      "count": 98,
+      "min": 23.77,
+      "q1": 25.395,
+      "median": 26.4,
+      "q3": 27.365000000000002,
+      "max": 49.04,
+      "mean": 27.61051020408163
+    },
+    {
+      "metric": "Poverty60",
+      "year": 2000,
+      "count": 98,
+      "min": 3.3,
+      "q1": 7.025,
+      "median": 8.5,
+      "q3": 9.775,
+      "max": 20.4,
+      "mean": 8.653061224489797
+    },
+    {
+      "metric": "Poverty60",
+      "year": 2010,
+      "count": 98,
+      "min": 4.5,
+      "q1": 8.7,
+      "median": 9.850000000000001,
+      "q3": 11.275,
+      "max": 23.5,
+      "mean": 10.040816326530612
+    },
+    {
+      "metric": "Poverty60",
+      "year": 2024,
+      "count": 98,
+      "min": 5.4,
+      "q1": 9.65,
+      "median": 11.350000000000001,
+      "q3": 13.3,
+      "max": 20.6,
+      "mean": 11.616326530612247
+    }
+  ],
+  "latest_rank_summary": {
+    "year": 2024,
+    "top_gini": [
+      {
+        "Municipality": "Gentofte",
+        "Gini": 49.04,
+        "Poverty60": 9.6,
+        "UnemploymentRate": 2.3333333333333335
+      },
+      {
+        "Municipality": "Rudersdal",
+        "Gini": 47.31,
+        "Poverty60": 7.6,
+        "UnemploymentRate": 1.9666666666666668
+      },
+      {
+        "Municipality": "Vejen",
+        "Gini": 46.32,
+        "Poverty60": 10.5,
+        "UnemploymentRate": 1.8583333333333334
+      },
+      {
+        "Municipality": "H\u00f8rsholm",
+        "Gini": 40.07,
+        "Poverty60": 7.3,
+        "UnemploymentRate": 2.15
+      },
+      {
+        "Municipality": "Lyngby-Taarb\u00e6k",
+        "Gini": 39.28,
+        "Poverty60": 11.8,
+        "UnemploymentRate": 2.2083333333333335
+      },
+      {
+        "Municipality": "Frederiksberg",
+        "Gini": 36.54,
+        "Poverty60": 14.9,
+        "UnemploymentRate": 3.1999999999999997
+      },
+      {
+        "Municipality": "Copenhagen",
+        "Gini": 34.97,
+        "Poverty60": 20.6,
+        "UnemploymentRate": 3.5833333333333335
+      },
+      {
+        "Municipality": "Aarhus",
+        "Gini": 33.43,
+        "Poverty60": 20.1,
+        "UnemploymentRate": 3.6833333333333336
+      }
+    ],
+    "top_poverty60": [
+      {
+        "Municipality": "Copenhagen",
+        "Gini": 34.97,
+        "Poverty60": 20.6,
+        "UnemploymentRate": 3.5833333333333335
+      },
+      {
+        "Municipality": "Aarhus",
+        "Gini": 33.43,
+        "Poverty60": 20.1,
+        "UnemploymentRate": 3.6833333333333336
+      },
+      {
+        "Municipality": "\u00c6r\u00f8",
+        "Gini": 26.98,
+        "Poverty60": 18.6,
+        "UnemploymentRate": 2.0083333333333333
+      },
+      {
+        "Municipality": "Odense",
+        "Gini": 28.32,
+        "Poverty60": 18.4,
+        "UnemploymentRate": 3.891666666666667
+      },
+      {
+        "Municipality": "Lolland",
+        "Gini": 26.45,
+        "Poverty60": 18.2,
+        "UnemploymentRate": 3.475
+      },
+      {
+        "Municipality": "Br\u00f8ndby",
+        "Gini": 26.16,
+        "Poverty60": 17.4,
+        "UnemploymentRate": 3.783333333333333
+      },
+      {
+        "Municipality": "Langeland",
+        "Gini": 25.27,
+        "Poverty60": 17.1,
+        "UnemploymentRate": 3.5500000000000003
+      },
+      {
+        "Municipality": "Ish\u00f8j",
+        "Gini": 24.88,
+        "Poverty60": 16.6,
+        "UnemploymentRate": 4.675
+      }
+    ],
+    "top_unemployment": [
+      {
+        "Municipality": "L\u00e6s\u00f8",
+        "Gini": 25.41,
+        "Poverty60": 14.3,
+        "UnemploymentRate": 4.716666666666667
+      },
+      {
+        "Municipality": "Ish\u00f8j",
+        "Gini": 24.88,
+        "Poverty60": 16.6,
+        "UnemploymentRate": 4.675
+      },
+      {
+        "Municipality": "Odense",
+        "Gini": 28.32,
+        "Poverty60": 18.4,
+        "UnemploymentRate": 3.891666666666667
+      },
+      {
+        "Municipality": "Br\u00f8ndby",
+        "Gini": 26.16,
+        "Poverty60": 17.4,
+        "UnemploymentRate": 3.783333333333333
+      },
+      {
+        "Municipality": "Frederikshavn",
+        "Gini": 26.39,
+        "Poverty60": 11.8,
+        "UnemploymentRate": 3.6916666666666664
+      },
+      {
+        "Municipality": "Aarhus",
+        "Gini": 33.43,
+        "Poverty60": 20.1,
+        "UnemploymentRate": 3.6833333333333336
+      },
+      {
+        "Municipality": "Aalborg",
+        "Gini": 28.59,
+        "Poverty60": 16.3,
+        "UnemploymentRate": 3.641666666666667
+      },
+      {
+        "Municipality": "Copenhagen",
+        "Gini": 34.97,
+        "Poverty60": 20.6,
+        "UnemploymentRate": 3.5833333333333335
+      }
+    ]
+  },
+  "data_caveats": {
+    "panel_end_year": 2024,
+    "panel_end_note": "The merged panel ends in 2024 because the income inequality and poverty source tables end in 2024 in the current extract.",
+    "life_expectancy_missing_latest_year": [
+      {
+        "MunicipalityCode": "492",
+        "Municipality": "\u00c6r\u00f8"
+      },
+      {
+        "MunicipalityCode": "563",
+        "Municipality": "Fan\u00f8"
+      },
+      {
+        "MunicipalityCode": "741",
+        "Municipality": "Sams\u00f8"
+      },
+      {
+        "MunicipalityCode": "825",
+        "Municipality": "L\u00e6s\u00f8"
+      }
+    ],
+    "negative_s80s20_source_rows": [
+      {
+        "Year": 1994,
+        "MunicipalityCode": "230",
+        "Municipality": "Rudersdal",
+        "S80S20": -12.73
+      }
+    ]
+  }
+}

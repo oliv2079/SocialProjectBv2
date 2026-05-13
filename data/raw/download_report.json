@@ -1,0 +1,47 @@
+{
+  "tables": [
+    {
+      "table": "IFOR41",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\IFOR41.csv",
+      "bytes": 930677
+    },
+    {
+      "table": "IFOR32",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\IFOR32.csv",
+      "bytes": 1793272
+    },
+    {
+      "table": "IFOR12P",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\IFOR12P.csv",
+      "bytes": 300053
+    },
+    {
+      "table": "AUP02",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\AUP02.csv",
+      "bytes": 1322031
+    },
+    {
+      "table": "HFUDD11",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\HFUDD11.csv",
+      "bytes": 969112
+    },
+    {
+      "table": "HISBK",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\HISBK.csv",
+      "bytes": 107320
+    }
+  ],
+  "geometry": {
+    "file": "denmark_municipalities.geojson",
+    "status": "downloaded",
+    "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\denmark_municipalities.geojson",
+    "source_bytes": 119050969,
+    "saved_bytes": 222128
+  }
+}
