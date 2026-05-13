@@ -525,6 +525,7 @@ def write_plotly_html(fig: go.Figure, path: Path) -> Path:
         default_width="100%",
         default_height="100%",
         config={"responsive": True},
+        auto_play=False,
     )
     path.write_text(
         f"""<!doctype html>
@@ -573,54 +574,147 @@ def write_plotly_html(fig: go.Figure, path: Path) -> Path:
 
 def plot_map(panel: pd.DataFrame) -> Path:
     geojson = compact_geojson(load_geojson(), precision=3, tolerance=0.004)
-    year = latest_year_with(panel, ["Gini"])
+    latest_year = latest_year_with(panel, ["Gini"])
     data = municipal_rows(panel)
-    data = data[(data["Year"] == year) & data["Gini"].notna()].copy()
+    data = data[data["Gini"].notna()].copy()
     data = add_geo_code(data)
+    data["Year"] = data["Year"].astype(int)
+    years = sorted(int(year) for year in data["Year"].dropna().unique())
+    year_range = f"{years[0]}-{years[-1]}"
+
+    municipalities = (
+        data[["MunicipalityCode", "Municipality", "MunicipalityCode4"]]
+        .drop_duplicates(subset=["MunicipalityCode"])
+        .sort_values("MunicipalityCode")
+        .reset_index(drop=True)
+    )
 
     bounds = geojson_bounds(geojson)
     center = {
         "lon": (bounds["west"] + bounds["east"]) / 2,
         "lat": (bounds["south"] + bounds["north"]) / 2,
     }
+    map_bounds = {
+        "west": bounds["west"] - 0.35,
+        "east": bounds["east"] + 0.35,
+        "south": bounds["south"] - 0.2,
+        "north": bounds["north"] + 0.2,
+    }
 
-    fig = px.choropleth_map(
-        data,
-        geojson=geojson,
-        locations="MunicipalityCode4",
-        featureidkey="properties.kode",
-        color="Gini",
-        hover_name="Municipality",
-        hover_data={
-            "MunicipalityCode4": False,
-            "Gini": ":.2f",
-            "Poverty60": ":.2f",
-            "UnemploymentRate": ":.2f",
-        },
-        opacity=0.96,
-        color_continuous_scale="YlGnBu",
-        title=f"Municipal income inequality in Denmark, {year}",
-        center=center,
-        zoom=5.45,
-        map_style="white-bg",
+    color_min = float(data["Gini"].min())
+    color_max = float(data["Gini"].max())
+
+    def format_metric(value: Any) -> str:
+        if pd.isna(value):
+            return "Not available"
+        return f"{float(value):.2f}"
+
+    def data_for_year(year: int) -> pd.DataFrame:
+        year_data = data.loc[
+            data["Year"] == year,
+            ["MunicipalityCode", "Gini", "Poverty60", "UnemploymentRate"],
+        ]
+        frame_data = municipalities.merge(year_data, on="MunicipalityCode", how="left")
+        frame_data["Year"] = year
+        return frame_data
+
+    def customdata_for(frame_data: pd.DataFrame) -> np.ndarray:
+        poverty = frame_data["Poverty60"].map(format_metric)
+        unemployment = frame_data["UnemploymentRate"].map(format_metric)
+        return np.column_stack(
+            [
+                frame_data["Municipality"].astype(str),
+                frame_data["Year"].astype(str),
+                poverty,
+                unemployment,
+            ]
+        )
+
+    hovertemplate = (
+        "<b>%{customdata[0]}</b><br>"
+        "Year: %{customdata[1]}<br>"
+        "Gini: %{z:.2f}<br>"
+        "Risk-of-poverty rate: %{customdata[2]}<br>"
+        "Unemployment rate: %{customdata[3]}"
+        "<extra></extra>"
     )
-    fig.update_traces(
-        marker_line_color="rgba(255,255,255,0.9)",
-        marker_line_width=0.7,
+
+    def map_trace(year: int, include_static: bool = False) -> go.Choroplethmap:
+        frame_data = data_for_year(year)
+        trace_args: dict[str, Any] = {
+            "locations": frame_data["MunicipalityCode4"],
+            "z": frame_data["Gini"],
+            "customdata": customdata_for(frame_data),
+            "hovertemplate": hovertemplate,
+            "name": str(year),
+        }
+        if include_static:
+            trace_args.update(
+                {
+                    "geojson": geojson,
+                    "featureidkey": "properties.kode",
+                    "colorscale": "YlGnBu",
+                    "zmin": color_min,
+                    "zmax": color_max,
+                    "colorbar": {"title": "Gini"},
+                    "marker": {
+                        "line": {
+                            "color": "rgba(255,255,255,0.9)",
+                            "width": 0.7,
+                        },
+                        "opacity": 0.96,
+                    },
+                }
+            )
+        return go.Choroplethmap(**trace_args)
+
+    slider_steps = [
+        {
+            "label": str(year),
+            "method": "animate",
+            "args": [
+                [str(year)],
+                {
+                    "mode": "immediate",
+                    "frame": {"duration": 0, "redraw": True},
+                    "transition": {"duration": 0},
+                },
+            ],
+        }
+        for year in years
+    ]
+
+    fig = go.Figure(
+        data=[map_trace(latest_year, include_static=True)],
+        frames=[
+            go.Frame(data=[map_trace(year)], name=str(year), traces=[0])
+            for year in years
+        ],
     )
     fig.update_layout(
-        margin={"r": 0, "t": 44, "l": 0, "b": 0},
+        title=f"Municipal income inequality in Denmark, {year_range}",
+        margin={"r": 0, "t": 44, "l": 0, "b": 96},
         autosize=True,
-        coloraxis_colorbar={"title": "Gini"},
         font={"family": "Arial, sans-serif"},
-    )
-    fig.update_maps(
-        bounds={
-            "west": bounds["west"] - 0.35,
-            "east": bounds["east"] + 0.35,
-            "south": bounds["south"] - 0.2,
-            "north": bounds["north"] + 0.2,
-        }
+        map={
+            "style": "white-bg",
+            "center": center,
+            "zoom": 5.45,
+            "bounds": map_bounds,
+        },
+        sliders=[
+            {
+                "active": years.index(latest_year),
+                "currentvalue": {"prefix": "Year: ", "font": {"size": 14}},
+                "len": 0.92,
+                "x": 0.04,
+                "xanchor": "left",
+                "y": 0,
+                "yanchor": "top",
+                "pad": {"t": 28, "b": 8},
+                "steps": slider_steps,
+            }
+        ],
     )
     path = VIS_DIR / "dk_inequality_map.html"
     return write_plotly_html(fig, path)
