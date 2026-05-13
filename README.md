@@ -78,6 +78,8 @@ Core StatBank tables:
 - `HISBK`: life expectancy for newborn babies.
 - `BOL101`: dwellings by region, resident type, tenure, ownership, use, year of
   construction, and time.
+- `BOLRD`: national dwellings with registered population by tenure, used as a
+  quality-control cross-check for BOL101 national tenure totals.
 
 Municipality boundaries are downloaded from the public Dataforsyningen API.
 
@@ -89,7 +91,8 @@ period. Tertiary education share is calculated as short-cycle higher education,
 vocational bachelor, bachelor, master, and PhD categories divided by the total
 education population. Housing tenure is calculated from BOL101 as owner- and
 tenant-occupied dwellings with registered population, matched only by the same
-municipality-year.
+municipality-year. BOLRD is not municipality-level in StatBank, so it is used
+only to validate national owner/tenant totals from the BOL101 pipeline.
 
 The analysis uses the tools expected in the course: distribution summaries,
 Pearson-style correlations, simple fitted lines, slope, intercept, and `R2`.
@@ -135,6 +138,9 @@ composition helps explain where hardship concentrates.
   extract. The 2021 and 2022 housing years are closed by Statistics Denmark due
   to BBR data errors, and 2026 housing observations are not carried back into
   the 2024 income panel.
+- BOLRD validates the national tenure totals only; it does not replace BOL101
+  for municipal tenure joins because it has tenure and time, but no municipality
+  dimension in the StatBank extract.
 - Open municipal wealth, housing-cost, and household consumption data are
   useful context, but they are not included because the current
   municipality-year panel is already enough to support the main descriptive

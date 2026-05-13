@@ -305,6 +305,157 @@ def clean_housing() -> pd.DataFrame:
     return housing[columns].sort_values(["MunicipalityCode", "Year"])
 
 
+def tenure_group_from_code_label(code: pd.Series, label: pd.Series) -> pd.Series:
+    code_upper = code.fillna("").str.upper()
+    label_upper = label.fillna("").str.upper()
+    return pd.Series(
+        np.select(
+            [
+                code_upper.eq("EJ") | label_upper.str.contains("OWNER", regex=False),
+                code_upper.eq("LEJ") | label_upper.str.contains("TENANT", regex=False),
+                code_upper.isin(["UOP", "UOPL"])
+                | label_upper.str.contains("NOT STATED", regex=False),
+            ],
+            ["Owner", "Tenant", "NotStated"],
+            default="Unknown",
+        ),
+        index=code.index,
+    )
+
+
+def clean_housing_bolrd_crosscheck() -> pd.DataFrame:
+    df = read_statbank_csv("BOLRD")
+    tenure_columns = [column for column in df.columns if column not in {"TID", VALUE_COL}]
+    if len(tenure_columns) != 1:
+        raise ValueError(
+            "Expected BOLRD to have exactly one non-time, non-value tenure column; "
+            f"found {tenure_columns}."
+        )
+
+    tenure_column = tenure_columns[0]
+    df["TenureCode"], df["Tenure"] = split_code_label(df[tenure_column])
+    df["TenureGroup"] = tenure_group_from_code_label(df["TenureCode"], df["Tenure"])
+    unknown = sorted(df.loc[df["TenureGroup"] == "Unknown", tenure_column].dropna().unique())
+    if unknown:
+        raise ValueError(f"Unknown BOLRD tenure values: {unknown}")
+
+    df["TimeCode"], _ = split_code_label(df["TID"])
+    df["Year"] = parse_year_from_time_code(df["TimeCode"]).astype("Int64")
+    df["Dwellings"] = parse_number(df[VALUE_COL])
+
+    crosscheck = (
+        df.groupby(["Year", "TenureGroup"], as_index=False)["Dwellings"]
+        .sum()
+        .pivot_table(
+            index="Year",
+            columns="TenureGroup",
+            values="Dwellings",
+            aggfunc="sum",
+        )
+        .reset_index()
+        .rename_axis(None, axis=1)
+        .rename(
+            columns={
+                "Owner": "BOLRDOwnerOccupiedDwellings",
+                "Tenant": "BOLRDTenantOccupiedDwellings",
+                "NotStated": "BOLRDNotStatedDwellings",
+            }
+        )
+    )
+
+    for column in [
+        "BOLRDOwnerOccupiedDwellings",
+        "BOLRDTenantOccupiedDwellings",
+        "BOLRDNotStatedDwellings",
+    ]:
+        if column not in crosscheck.columns:
+            crosscheck[column] = 0
+
+    crosscheck["BOLRDKnownTenureDwellings"] = (
+        crosscheck["BOLRDOwnerOccupiedDwellings"]
+        + crosscheck["BOLRDTenantOccupiedDwellings"]
+    )
+    valid_denominator = crosscheck["BOLRDKnownTenureDwellings"] > 0
+    crosscheck["BOLRDOwnerShare"] = np.where(
+        valid_denominator,
+        crosscheck["BOLRDOwnerOccupiedDwellings"]
+        / crosscheck["BOLRDKnownTenureDwellings"]
+        * 100,
+        np.nan,
+    )
+    return crosscheck.sort_values("Year")
+
+
+def build_housing_tenure_crosscheck() -> pd.DataFrame:
+    bol101 = clean_housing()
+    bol101 = bol101[
+        (bol101["MunicipalityCode"] == "000")
+        & bol101["OwnerOccupiedDwellings"].notna()
+        & bol101["TenantOccupiedDwellings"].notna()
+    ].copy()
+    bol101 = bol101.rename(
+        columns={
+            "OwnerOccupiedDwellings": "BOL101OwnerOccupiedDwellings",
+            "TenantOccupiedDwellings": "BOL101TenantOccupiedDwellings",
+            "KnownTenureDwellings": "BOL101KnownTenureDwellings",
+            "OwnerShare": "BOL101OwnerShare",
+        }
+    )
+
+    bolrd = clean_housing_bolrd_crosscheck()
+    crosscheck = bol101[
+        [
+            "Year",
+            "BOL101OwnerOccupiedDwellings",
+            "BOL101TenantOccupiedDwellings",
+            "BOL101KnownTenureDwellings",
+            "BOL101OwnerShare",
+        ]
+    ].merge(bolrd, on="Year", how="inner")
+    if crosscheck.empty:
+        raise ValueError("No overlapping years between BOL101 and BOLRD housing tenure.")
+
+    crosscheck["OwnerOccupiedDwellingsDiff"] = (
+        crosscheck["BOL101OwnerOccupiedDwellings"]
+        - crosscheck["BOLRDOwnerOccupiedDwellings"]
+    )
+    crosscheck["TenantOccupiedDwellingsDiff"] = (
+        crosscheck["BOL101TenantOccupiedDwellings"]
+        - crosscheck["BOLRDTenantOccupiedDwellings"]
+    )
+    crosscheck["KnownTenureDwellingsDiff"] = (
+        crosscheck["BOL101KnownTenureDwellings"]
+        - crosscheck["BOLRDKnownTenureDwellings"]
+    )
+    crosscheck["OwnerShareDiffPp"] = (
+        crosscheck["BOL101OwnerShare"] - crosscheck["BOLRDOwnerShare"]
+    )
+    crosscheck["Status"] = np.where(
+        crosscheck["OwnerShareDiffPp"].abs() > 0.05, "review", "ok"
+    )
+
+    columns = [
+        "Year",
+        "BOL101OwnerOccupiedDwellings",
+        "BOLRDOwnerOccupiedDwellings",
+        "OwnerOccupiedDwellingsDiff",
+        "BOL101TenantOccupiedDwellings",
+        "BOLRDTenantOccupiedDwellings",
+        "TenantOccupiedDwellingsDiff",
+        "BOL101KnownTenureDwellings",
+        "BOLRDKnownTenureDwellings",
+        "KnownTenureDwellingsDiff",
+        "BOL101OwnerShare",
+        "BOLRDOwnerShare",
+        "OwnerShareDiffPp",
+        "BOLRDNotStatedDwellings",
+        "Status",
+    ]
+    crosscheck = crosscheck[columns].sort_values("Year")
+    crosscheck.to_csv(PROCESSED_DIR / "housing_tenure_crosscheck.csv", index=False)
+    return crosscheck
+
+
 def build_panel() -> tuple[pd.DataFrame, pd.DataFrame]:
     inequality = clean_inequality()
     poverty = clean_poverty()
@@ -1235,8 +1386,39 @@ def housing_summary(panel: pd.DataFrame, regressions: pd.DataFrame) -> dict[str,
     }
 
 
+def housing_crosscheck_summary(crosscheck: pd.DataFrame) -> dict[str, Any]:
+    if crosscheck.empty:
+        return {}
+
+    latest = crosscheck.sort_values("Year").iloc[-1]
+    status = "review" if (crosscheck["Status"] == "review").any() else "ok"
+    return {
+        "status": status,
+        "rows": int(len(crosscheck)),
+        "latest_comparable_year": int(latest["Year"]),
+        "latest_status": str(latest["Status"]),
+        "latest_owner_occupied_diff": float(latest["OwnerOccupiedDwellingsDiff"]),
+        "latest_tenant_occupied_diff": float(latest["TenantOccupiedDwellingsDiff"]),
+        "latest_known_tenure_diff": float(latest["KnownTenureDwellingsDiff"]),
+        "latest_owner_share_diff_pp": float(latest["OwnerShareDiffPp"]),
+        "max_abs_owner_occupied_diff": float(
+            crosscheck["OwnerOccupiedDwellingsDiff"].abs().max()
+        ),
+        "max_abs_tenant_occupied_diff": float(
+            crosscheck["TenantOccupiedDwellingsDiff"].abs().max()
+        ),
+        "max_abs_known_tenure_diff": float(
+            crosscheck["KnownTenureDwellingsDiff"].abs().max()
+        ),
+        "max_abs_owner_share_diff_pp": float(crosscheck["OwnerShareDiffPp"].abs().max()),
+    }
+
+
 def write_summary(
-    panel: pd.DataFrame, regressions: pd.DataFrame, correlations: pd.DataFrame
+    panel: pd.DataFrame,
+    regressions: pd.DataFrame,
+    correlations: pd.DataFrame,
+    housing_crosscheck: pd.DataFrame,
 ) -> Path:
     latest_gini_year = latest_year_with(panel, ["Gini"])
     latest_poverty_year = latest_year_with(panel, ["Gini", "Poverty60"])
@@ -1271,8 +1453,10 @@ def write_summary(
             ),
             "housing_note": (
                 "BOL101 housing tenure is matched by the same municipality-year only; "
-                "2026 housing observations are not carried back into the 2024 income panel."
+                "2026 housing observations are not carried back into the 2024 income panel. "
+                "BOLRD is used as a national cross-check for the BOL101 tenure totals."
             ),
+            "housing_crosscheck": housing_crosscheck_summary(housing_crosscheck),
             "life_expectancy_missing_latest_year": life_missing.to_dict(
                 orient="records"
             ),
@@ -1289,6 +1473,7 @@ def make_figures(
     deciles: pd.DataFrame,
     regressions: pd.DataFrame,
     correlations: pd.DataFrame,
+    housing_crosscheck: pd.DataFrame,
 ) -> dict[str, Path]:
     outputs = {
         "trend": plot_trend(panel),
@@ -1299,7 +1484,7 @@ def make_figures(
         "rank_comparison": plot_rank_comparison(panel),
         "housing_bridge": plot_housing_bridge(panel),
         "scatter": plot_scatter(panel),
-        "summary": write_summary(panel, regressions, correlations),
+        "summary": write_summary(panel, regressions, correlations, housing_crosscheck),
     }
     return outputs
 
@@ -1307,6 +1492,7 @@ def make_figures(
 def run_pipeline(skip_figures: bool = False) -> dict[str, Any]:
     ensure_dirs()
     panel, deciles = build_panel()
+    housing_crosscheck = build_housing_tenure_crosscheck()
     regressions = calculate_regressions(panel)
     correlations = calculate_correlation_over_time(panel)
     outputs: dict[str, Any] = {
@@ -1318,10 +1504,13 @@ def run_pipeline(skip_figures: bool = False) -> dict[str, Any]:
             PROCESSED_DIR / "missingness_summary.csv",
             PROCESSED_DIR / "regression_summary.csv",
             PROCESSED_DIR / "correlation_over_time.csv",
+            PROCESSED_DIR / "housing_tenure_crosscheck.csv",
         ],
     }
     if not skip_figures:
-        outputs["figures"] = make_figures(panel, deciles, regressions, correlations)
+        outputs["figures"] = make_figures(
+            panel, deciles, regressions, correlations, housing_crosscheck
+        )
     return outputs
 
 

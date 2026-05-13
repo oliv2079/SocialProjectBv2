@@ -1041,7 +1041,21 @@
   "data_caveats": {
     "panel_end_year": 2024,
     "panel_end_note": "The merged panel ends in 2024 because the income inequality and poverty source tables end in 2024 in the current extract.",
-    "housing_note": "BOL101 housing tenure is matched by the same municipality-year only; 2026 housing observations are not carried back into the 2024 income panel.",
+    "housing_note": "BOL101 housing tenure is matched by the same municipality-year only; 2026 housing observations are not carried back into the 2024 income panel. BOLRD is used as a national cross-check for the BOL101 tenure totals.",
+    "housing_crosscheck": {
+      "status": "ok",
+      "rows": 15,
+      "latest_comparable_year": 2026,
+      "latest_status": "ok",
+      "latest_owner_occupied_diff": 0.0,
+      "latest_tenant_occupied_diff": 0.0,
+      "latest_known_tenure_diff": 0.0,
+      "latest_owner_share_diff_pp": 0.0,
+      "max_abs_owner_occupied_diff": 0.0,
+      "max_abs_tenant_occupied_diff": 0.0,
+      "max_abs_known_tenure_diff": 0.0,
+      "max_abs_owner_share_diff_pp": 0.0
+    },
     "life_expectancy_missing_latest_year": [
       {
         "MunicipalityCode": "492",

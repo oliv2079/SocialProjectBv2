@@ -1,43 +1,11 @@
 {
   "tables": [
     {
-      "table": "IFOR41",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\IFOR41.csv"
-    },
-    {
-      "table": "IFOR32",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\IFOR32.csv"
-    },
-    {
-      "table": "IFOR12P",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\IFOR12P.csv"
-    },
-    {
-      "table": "AUP02",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\AUP02.csv"
-    },
-    {
-      "table": "HFUDD11",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\HFUDD11.csv"
-    },
-    {
-      "table": "HISBK",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\HISBK.csv"
-    },
-    {
-      "table": "BOL101",
-      "status": "skipped",
-      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\BOL101.csv"
+      "table": "BOLRD",
+      "status": "downloaded",
+      "path": "C:\\Users\\olive\\Desktop\\Social Project\\data\\raw\\BOLRD.csv",
+      "bytes": 6965
     }
   ],
-  "geometry": {
-    "file": "denmark_municipalities.geojson",
-    "status": "skipped"
-  }
+  "geometry": null
 }

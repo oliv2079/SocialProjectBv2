@@ -1,0 +1,282 @@
+{
+  "id": "BOLRD",
+  "text": "Occupied dwellings",
+  "description": "Occupied dwellings by tenure and time",
+  "unit": "Number",
+  "suppressedDataValue": "0",
+  "updated": "2026-04-08T08:00:00",
+  "active": true,
+  "contacts": [
+    {
+      "name": "Annika Klintefelt",
+      "phone": "+4523311433",
+      "mail": "akf@dst.dk"
+    }
+  ],
+  "documentation": {
+    "id": "46fdade9-ae4e-4572-8a06-048c8b74e388",
+    "url": "https://www.dst.dk/documentationofstatistics/46fdade9-ae4e-4572-8a06-048c8b74e388"
+  },
+  "footnote": {
+    "text": "1930-1950 includes the capital, towns and villages of more than 1,000 inhabitants (only ordinary residential apartments). 1955-1965 includes a 10% section of households with independent housing throughout the country. 1970 is a total census throughout the country. 1977 is a register census, where only housing in multi-family houses is included. From 1980 there are register counts of all dwellings.",
+    "mandatory": true
+  },
+  "variables": [
+    {
+      "id": "UDLFORH",
+      "text": "tenure",
+      "elimination": true,
+      "time": false,
+      "values": [
+        {
+          "id": "EJ",
+          "text": "Occupied by the owner"
+        },
+        {
+          "id": "LEJ",
+          "text": "Occupied by the tenant"
+        },
+        {
+          "id": "UOPL",
+          "text": "Not stated"
+        }
+      ]
+    },
+    {
+      "id": "Tid",
+      "text": "time",
+      "elimination": false,
+      "time": true,
+      "values": [
+        {
+          "id": "1930",
+          "text": "1930"
+        },
+        {
+          "id": "1935",
+          "text": "1935"
+        },
+        {
+          "id": "1940",
+          "text": "1940"
+        },
+        {
+          "id": "1945",
+          "text": "1945"
+        },
+        {
+          "id": "1950",
+          "text": "1950"
+        },
+        {
+          "id": "1955",
+          "text": "1955"
+        },
+        {
+          "id": "1960",
+          "text": "1960"
+        },
+        {
+          "id": "1965",
+          "text": "1965"
+        },
+        {
+          "id": "1970",
+          "text": "1970"
+        },
+        {
+          "id": "1977",
+          "text": "1977"
+        },
+        {
+          "id": "1980",
+          "text": "1980"
+        },
+        {
+          "id": "1981",
+          "text": "1981"
+        },
+        {
+          "id": "1982",
+          "text": "1982"
+        },
+        {
+          "id": "1983",
+          "text": "1983"
+        },
+        {
+          "id": "1984",
+          "text": "1984"
+        },
+        {
+          "id": "1985",
+          "text": "1985"
+        },
+        {
+          "id": "1986",
+          "text": "1986"
+        },
+        {
+          "id": "1987",
+          "text": "1987"
+        },
+        {
+          "id": "1988",
+          "text": "1988"
+        },
+        {
+          "id": "1989",
+          "text": "1989"
+        },
+        {
+          "id": "1990",
+          "text": "1990"
+        },
+        {
+          "id": "1991",
+          "text": "1991"
+        },
+        {
+          "id": "1992",
+          "text": "1992"
+        },
+        {
+          "id": "1993",
+          "text": "1993"
+        },
+        {
+          "id": "1994",
+          "text": "1994"
+        },
+        {
+          "id": "1995",
+          "text": "1995"
+        },
+        {
+          "id": "1996",
+          "text": "1996"
+        },
+        {
+          "id": "1997",
+          "text": "1997"
+        },
+        {
+          "id": "1998",
+          "text": "1998"
+        },
+        {
+          "id": "1999",
+          "text": "1999"
+        },
+        {
+          "id": "2000",
+          "text": "2000"
+        },
+        {
+          "id": "2001",
+          "text": "2001"
+        },
+        {
+          "id": "2002",
+          "text": "2002"
+        },
+        {
+          "id": "2003",
+          "text": "2003"
+        },
+        {
+          "id": "2004",
+          "text": "2004"
+        },
+        {
+          "id": "2005",
+          "text": "2005"
+        },
+        {
+          "id": "2006",
+          "text": "2006"
+        },
+        {
+          "id": "2007",
+          "text": "2007"
+        },
+        {
+          "id": "2008",
+          "text": "2008"
+        },
+        {
+          "id": "2009",
+          "text": "2009"
+        },
+        {
+          "id": "2010",
+          "text": "2010"
+        },
+        {
+          "id": "2011",
+          "text": "2011"
+        },
+        {
+          "id": "2012",
+          "text": "2012"
+        },
+        {
+          "id": "2013",
+          "text": "2013"
+        },
+        {
+          "id": "2014",
+          "text": "2014"
+        },
+        {
+          "id": "2015",
+          "text": "2015"
+        },
+        {
+          "id": "2016",
+          "text": "2016"
+        },
+        {
+          "id": "2017",
+          "text": "2017"
+        },
+        {
+          "id": "2018",
+          "text": "2018"
+        },
+        {
+          "id": "2019",
+          "text": "2019"
+        },
+        {
+          "id": "2020",
+          "text": "2020"
+        },
+        {
+          "id": "2021",
+          "text": "2021"
+        },
+        {
+          "id": "2022",
+          "text": "2022"
+        },
+        {
+          "id": "2023",
+          "text": "2023"
+        },
+        {
+          "id": "2024",
+          "text": "2024"
+        },
+        {
+          "id": "2025",
+          "text": "2025"
+        },
+        {
+          "id": "2026",
+          "text": "2026"
+        }
+      ]
+    }
+  ]
+}

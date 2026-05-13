@@ -7552,9 +7552,10 @@ a.anchor-link {
 <li><code>HFUDD11</code>: educational attainment for ages 15-69.</li>
 <li><code>HISBK</code>: life expectancy for newborn babies.</li>
 <li><code>BOL101</code>: dwellings with registered population by municipality and tenure.</li>
+<li><code>BOLRD</code>: national dwellings with registered population by tenure, used to cross-check BOL101 tenure totals.</li>
 </ul>
 <p>Municipality boundaries come from the public Dataforsyningen municipality GeoJSON endpoint. We use the checked-in local extract of the data tables, with APA-style source entries and retrieval dates listed in the references.</p>
-<p>We chose these tables because they are official, municipality-level sources with enough overlap for the course workflow: inspect the raw schemas, clean and merge tabular data, check missingness, visualize distributions and relationships, and publish a one-page public story. The unit of analysis is municipality-year, with a national row kept for national trend plots and removed for municipal cross-sectional analysis. Housing tenure is matched only by same municipality-year, so newer 2026 housing values are not carried back into the 2024 income panel.</p>
+<p>We chose these tables because they are official, municipality-level sources with enough overlap for the course workflow: inspect the raw schemas, clean and merge tabular data, check missingness, visualize distributions and relationships, and publish a one-page public story. The unit of analysis is municipality-year, with a national row kept for national trend plots and removed for municipal cross-sectional analysis. Housing tenure is matched only by same municipality-year, so newer 2026 housing values are not carried back into the 2024 income panel. BOLRD is not used for municipality-level joins because the StatBank extract has tenure and time but no municipality dimension.</p>
 </div>
 </div>
 </div>
@@ -7622,6 +7623,7 @@ a.anchor-link {
 <li>aggregates monthly unemployment into annual municipal means,</li>
 <li>calculates tertiary education share from education counts,</li>
 <li>aggregates BOL101 owner- and tenant-occupied dwellings into <code>OwnerShare</code> and <code>TenantShare</code>,</li>
+<li>cross-checks national BOL101 tenure totals against BOLRD,</li>
 <li>exports processed CSVs and website-ready visualizations.</li>
 </ul>
 </div>
@@ -7722,54 +7724,60 @@ Decile rows: 37,620
 </tr>
 <tr>
 <th>5</th>
+<td>processed</td>
+<td>housing_tenure_crosscheck.csv</td>
+<td>data/processed/housing_tenure_crosscheck.csv</td>
+</tr>
+<tr>
+<th>6</th>
 <td>figure</td>
 <td>trend</td>
 <td>images/dk_inequality_trend.png</td>
 </tr>
 <tr>
-<th>6</th>
+<th>7</th>
 <td>figure</td>
 <td>deciles</td>
 <td>images/dk_decile_distribution.png</td>
 </tr>
 <tr>
-<th>7</th>
+<th>8</th>
 <td>figure</td>
 <td>distribution</td>
 <td>images/dk_municipal_distribution.png</td>
 </tr>
 <tr>
-<th>8</th>
+<th>9</th>
 <td>figure</td>
 <td>correlation_robustness</td>
 <td>images/dk_correlation_robustness.png</td>
 </tr>
 <tr>
-<th>9</th>
+<th>10</th>
 <td>figure</td>
 <td>map</td>
 <td>visualizations/dk_inequality_map.html</td>
 </tr>
 <tr>
-<th>10</th>
+<th>11</th>
 <td>figure</td>
 <td>rank_comparison</td>
 <td>visualizations/dk_inequality_poverty_rank.html</td>
 </tr>
 <tr>
-<th>11</th>
+<th>12</th>
 <td>figure</td>
 <td>housing_bridge</td>
 <td>visualizations/dk_housing_tenure_bridge.html</td>
 </tr>
 <tr>
-<th>12</th>
+<th>13</th>
 <td>figure</td>
 <td>scatter</td>
 <td>visualizations/dk_poverty_unemployment_scatter.html</td>
 </tr>
 <tr>
-<th>13</th>
+<th>14</th>
 <td>figure</td>
 <td>summary</td>
 <td>data/processed/summary_stats.json</td>
@@ -7806,12 +7814,13 @@ Decile rows: 37,620
 <span class="n">missingness</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"missingness_summary.csv"</span><span class="p">)</span>
 <span class="n">regression_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"regression_summary.csv"</span><span class="p">)</span>
 <span class="n">correlation_over_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"correlation_over_time.csv"</span><span class="p">)</span>
+<span class="n">housing_crosscheck</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"housing_tenure_crosscheck.csv"</span><span class="p">)</span>
 <span class="n">summary_stats</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">((</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"summary_stats.json"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
 
 <span class="n">basic_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">"table"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"municipality_year"</span><span class="p">,</span> <span class="s2">"decile_distribution"</span><span class="p">],</span>
-    <span class="s2">"rows"</span><span class="p">:</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">municipality_year</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">deciles</span><span class="p">)],</span>
-    <span class="s2">"columns"</span><span class="p">:</span> <span class="p">[</span><span class="n">municipality_year</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">deciles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+    <span class="s2">"table"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"municipality_year"</span><span class="p">,</span> <span class="s2">"decile_distribution"</span><span class="p">,</span> <span class="s2">"housing_tenure_crosscheck"</span><span class="p">],</span>
+    <span class="s2">"rows"</span><span class="p">:</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">municipality_year</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">deciles</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">housing_crosscheck</span><span class="p">)],</span>
+    <span class="s2">"columns"</span><span class="p">:</span> <span class="p">[</span><span class="n">municipality_year</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">deciles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">housing_crosscheck</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
 <span class="p">})</span>
 
 <span class="n">year_coverage</span> <span class="o">=</span> <span class="p">(</span>
@@ -7882,6 +7891,12 @@ Decile rows: 37,620
 <td>decile_distribution</td>
 <td>37620</td>
 <td>7</td>
+</tr>
+<tr>
+<th>2</th>
+<td>housing_tenure_crosscheck</td>
+<td>15</td>
+<td>15</td>
 </tr>
 </tbody>
 </table>
@@ -8358,12 +8373,131 @@ OwnerShare + TenantShare range: 100.000000 to 100.000000
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f51f6e74">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6341302e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Housing-tenure-source-check">Housing tenure source check<a class="anchor-link" href="#Housing-tenure-source-check">¶</a></h3><p><code>BOL101</code> remains the housing source for municipal joins because it includes the region/municipality dimension. <code>BOLRD</code> has tenure and time only in the StatBank extract, so we use it as a national quality-control check for the owner/tenant totals rather than as a replacement panel.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=aab01a75">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">housing_check_columns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Year"</span><span class="p">,</span>
+    <span class="s2">"BOL101OwnerOccupiedDwellings"</span><span class="p">,</span>
+    <span class="s2">"BOLRDOwnerOccupiedDwellings"</span><span class="p">,</span>
+    <span class="s2">"OwnerOccupiedDwellingsDiff"</span><span class="p">,</span>
+    <span class="s2">"BOL101TenantOccupiedDwellings"</span><span class="p">,</span>
+    <span class="s2">"BOLRDTenantOccupiedDwellings"</span><span class="p">,</span>
+    <span class="s2">"TenantOccupiedDwellingsDiff"</span><span class="p">,</span>
+    <span class="s2">"BOL101OwnerShare"</span><span class="p">,</span>
+    <span class="s2">"BOLRDOwnerShare"</span><span class="p">,</span>
+    <span class="s2">"OwnerShareDiffPp"</span><span class="p">,</span>
+    <span class="s2">"Status"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">latest_housing_crosscheck</span> <span class="o">=</span> <span class="n">housing_crosscheck</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"Year"</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Latest BOL101 vs BOLRD national tenure cross-check"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">latest_housing_crosscheck</span><span class="p">[</span><span class="n">housing_check_columns</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">({</span>
+    <span class="s2">"BOL101OwnerShare"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"BOLRDOwnerShare"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"OwnerShareDiffPp"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Max absolute owner-share difference, percentage points:"</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">housing_crosscheck</span><span class="p">[</span><span class="s2">"OwnerShareDiffPp"</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Latest BOL101 vs BOLRD national tenure cross-check
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Year</th>
+<th>BOL101OwnerOccupiedDwellings</th>
+<th>BOLRDOwnerOccupiedDwellings</th>
+<th>OwnerOccupiedDwellingsDiff</th>
+<th>BOL101TenantOccupiedDwellings</th>
+<th>BOLRDTenantOccupiedDwellings</th>
+<th>TenantOccupiedDwellingsDiff</th>
+<th>BOL101OwnerShare</th>
+<th>BOLRDOwnerShare</th>
+<th>OwnerShareDiffPp</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>14</th>
+<td>2026</td>
+<td>1355272</td>
+<td>1355272.0</td>
+<td>0.0</td>
+<td>1496878</td>
+<td>1496878.0</td>
+<td>0.0</td>
+<td>47.518</td>
+<td>47.518</td>
+<td>0.0</td>
+<td>ok</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Max absolute owner-share difference, percentage points: 0.0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f51f6e74">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">distribution_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary_stats</span><span class="p">[</span><span class="s2">"benchmark_distribution_stats"</span><span class="p">])</span>
@@ -8961,7 +9095,7 @@ Lowest owner-share municipalities
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Latest-year regression summary"</span><span class="p">)</span>
@@ -9591,7 +9725,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s1">'&lt;img src="../images/dk_inequality_trend.png" alt="Indexed trend chart for Danish inequality and poverty measures" style="max-width: 100%; height: auto;"&gt;'</span><span class="p">))</span>
@@ -9617,7 +9751,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s1">'&lt;img src="../images/dk_municipal_distribution.png" alt="Municipal Gini and poverty distribution plots" style="max-width: 100%; height: auto;"&gt;'</span><span class="p">))</span>
@@ -9643,7 +9777,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s2">"../visualizations/dk_inequality_map.html"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">900</span><span class="p">))</span>
@@ -9669,7 +9803,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s2">"../visualizations/dk_inequality_poverty_rank.html"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">650</span><span class="p">))</span>
@@ -9695,7 +9829,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s2">"../visualizations/dk_housing_tenure_bridge.html"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">760</span><span class="p">))</span>
@@ -9721,7 +9855,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s2">"../visualizations/dk_poverty_unemployment_scatter.html"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">650</span><span class="p">))</span>
@@ -9747,7 +9881,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s1">'&lt;img src="../images/dk_correlation_robustness.png" alt="Over-time R squared robustness chart" style="max-width: 100%; height: auto;"&gt;'</span><span class="p">))</span>
@@ -9890,7 +10024,7 @@ Latest-year robustness checks
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="9.-Discussion">9. Discussion<a class="anchor-link" href="#9.-Discussion">¶</a></h2><p>The main strength is the data base. It is official, reproducible, and local enough for municipal comparison. The seven-chart structure gives enough evidence for the main claim without turning the site into a dashboard. The distribution figure examines shape and spread, the ranked comparison makes the difference between inequality and hardship concrete, the housing-tenure bridge gives that difference local structure, and the over-time R2 figure checks that the conclusion is not only about the endpoint year.</p>
 <p>The added housing explanation helps make sense of the split between the lists. We still do not claim that education, life expectancy, poverty, unemployment, or housing tenure causes municipal inequality. Instead, we show that some high-Gini places also have higher education shares and longer life expectancy, while high-poverty places often face more unemployment and have lower owner-occupancy. That helps explain why Gentofte or Rudersdal should not be read the same way as Lolland, Ishoj, Copenhagen, or Aarhus, even though all are important to the story.</p>
-<p>The limits are important. We cannot identify causal effects, separate household wealth from income, or measure housing costs and consumption. BOL101 gives tenure, not rent burden or local housing prices, and 2021-2022 are closed in the source because of BBR data errors. Life expectancy is measured over rolling periods and is noisier in small municipalities. The latest merged income panel ends in 2024 even though housing has 2026 observations; we do not carry those newer housing values backward. A future version could add population weighting, housing-cost indicators, and a formal panel model, but those additions would answer a more causal question than this course project is meant to answer.</p>
+<p>The limits are important. We cannot identify causal effects, separate household wealth from income, or measure housing costs and consumption. BOL101 gives municipal tenure, not rent burden or local housing prices, and 2021-2022 are closed in the source because of BBR data errors. BOLRD validates the national owner/tenant totals, but it does not add a municipality dimension. Life expectancy is measured over rolling periods and is noisier in small municipalities. The latest merged income panel ends in 2024 even though housing has 2026 observations; we do not carry those newer housing values backward. A future version could add population weighting, housing-cost indicators, and a formal panel model, but those additions would answer a more causal question than this course project is meant to answer.</p>
 </div>
 </div>
 </div>
@@ -9917,6 +10051,7 @@ Latest-year robustness checks
 <li>Segel, E., &amp; Heer, J. (2010). Narrative visualization: Telling stories with data. <em>IEEE Transactions on Visualization and Computer Graphics, 16</em>(6), 1139-1148. <a href="https://doi.org/10.1109/TVCG.2010.179">https://doi.org/10.1109/TVCG.2010.179</a></li>
 <li>Statistics Denmark. (n.d.). <em>Average equivalised disposable income by decile (IFOR32)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/IFOR32">https://www.statbank.dk/IFOR32</a></li>
 <li>Statistics Denmark. (n.d.). <em>Dwellings (BOL101)</em> [Data set]. StatBank Denmark. Retrieved May 13, 2026, from <a href="https://www.statbank.dk/BOL101">https://www.statbank.dk/BOL101</a></li>
+<li>Statistics Denmark. (n.d.). <em>Dwellings with registered population by tenure (BOLRD)</em> [Data set]. StatBank Denmark. Retrieved May 13, 2026, from <a href="https://www.statbank.dk/BOLRD">https://www.statbank.dk/BOLRD</a></li>
 <li>Statistics Denmark. (n.d.). <em>Educational attainment (HFUDD11)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HFUDD11">https://www.statbank.dk/HFUDD11</a></li>
 <li>Statistics Denmark. (n.d.). <em>Income distribution on equivalised disposable income (IFOR41)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/IFOR41">https://www.statbank.dk/IFOR41</a></li>
 <li>Statistics Denmark. (n.d.). <em>Life expectancy for newborn babies (HISBK)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HISBK">https://www.statbank.dk/HISBK</a></li>

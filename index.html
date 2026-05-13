@@ -309,7 +309,7 @@
       <h2>The question</h2>
       <p>We ask how unequal Danish municipalities are, how that has changed over time, and whether inequality points to the same places as poverty and unemployment. The pattern is more nuanced than one map or national trend line can show. Inequality and hardship overlap in some municipalities, but they often do not.</p>
       <p>The data comes from official Statistics Denmark StatBank tables for inequality, decile incomes, poverty, unemployment, education, life expectancy, and housing tenure.</p>
-      <p>We use a municipality-year panel covering 98 Danish municipalities plus a national benchmark. The shared income panel runs from 1987 to 2024, the poverty series begins in 2000, and monthly unemployment is averaged into annual municipal rates. Housing tenure is matched only by the same municipality-year, so newer 2026 housing observations are not carried back into the 2024 income panel. These are descriptive results; we do not draw causal conclusions.</p>
+      <p>We use a municipality-year panel covering 98 Danish municipalities plus a national benchmark. The shared income panel runs from 1987 to 2024, the poverty series begins in 2000, and monthly unemployment is averaged into annual municipal rates. Housing tenure is matched only by the same municipality-year, so newer 2026 housing observations are not carried back into the 2024 income panel. Municipal tenure comes from BOL101; BOLRD is used only as a national owner/tenant cross-check because it has tenure and time but no municipality dimension. These are descriptive results; we do not draw causal conclusions.</p>
       <div class="glossary" aria-label="Plain-language glossary">
         <p class="term"><strong>Gini</strong>A 0 to 100 income-inequality measure based on equivalized disposable income. Higher values mean incomes are more spread out.</p>
         <p class="term"><strong>P90/P10</strong>The income near the top of the distribution divided by income near the bottom, using the 90th and 10th percentiles.</p>
@@ -442,7 +442,7 @@
       <h2>Limits</h2>
       <p>The merged panel ends in 2024 because the income inequality and poverty tables end in 2024. Monthly unemployment and education may have newer observations in the raw source systems, but using them would not extend the complete income-poverty panel used here.</p>
       <p>Life expectancy is measured over rolling periods and is more volatile in small municipalities. The 2024 merged panel is missing life expectancy for four small island municipalities: &AElig;r&oslash;, Fan&oslash;, Sams&oslash;, and L&aelig;s&oslash;. StatBank also reports one implausible S80/S20 value: Rudersdal has a negative value in 1994. We flag it and do not base any argument on it.</p>
-      <p>BOL101 housing tenure is available for 2010-2020 and 2023-2026 in the current extract; 2021 and 2022 are closed in the source because of BBR data errors. We match housing only by the same municipality-year and do not add a housing-cost proxy, because a robust municipal cost series is outside this descriptive scope.</p>
+      <p>BOL101 housing tenure is available for 2010-2020 and 2023-2026 in the current extract; 2021 and 2022 are closed in the source because of BBR data errors. We match housing only by the same municipality-year and validate the national BOL101 tenure totals against BOLRD. We do not add a housing-cost proxy, because a robust municipal cost series is outside this descriptive scope.</p>
     </section>
 
     <section>
@@ -455,6 +455,7 @@
         <li>Statistics Denmark. (n.d.). <em>Educational attainment (HFUDD11)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HFUDD11">https://www.statbank.dk/HFUDD11</a></li>
         <li>Statistics Denmark. (n.d.). <em>Life expectancy for newborn babies (HISBK)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HISBK">https://www.statbank.dk/HISBK</a></li>
         <li>Statistics Denmark. (n.d.). <em>Dwellings (BOL101)</em> [Data set]. StatBank Denmark. Retrieved May 13, 2026, from <a href="https://www.statbank.dk/BOL101">https://www.statbank.dk/BOL101</a></li>
+        <li>Statistics Denmark. (n.d.). <em>Dwellings with registered population by tenure (BOLRD)</em> [Data set]. StatBank Denmark. Retrieved May 13, 2026, from <a href="https://www.statbank.dk/BOLRD">https://www.statbank.dk/BOLRD</a></li>
         <li>Dataforsyningen. (n.d.). <em>Kommuner</em> [GeoJSON data set]. Retrieved May 12, 2026, from <a href="https://api.dataforsyningen.dk/kommuner?format=geojson">https://api.dataforsyningen.dk/kommuner?format=geojson</a></li>
         <li>Segel, E., &amp; Heer, J. (2010). Narrative visualization: Telling stories with data. <em>IEEE Transactions on Visualization and Computer Graphics, 16</em>(6), 1139-1148. <a href="https://doi.org/10.1109/TVCG.2010.179">https://doi.org/10.1109/TVCG.2010.179</a></li>
       </ol>
@@ -463,7 +464,7 @@
 
   <footer>
     <div class="wrap">
-      <p>Sources: Statistics Denmark StatBank tables IFOR41, IFOR32, IFOR12P, AUP02, HFUDD11, HISBK, and BOL101; Danish municipality GeoJSON from Dataforsyningen. Reproduce with <code>python scripts/build_project.py</code>. Detailed analysis is in the <a href="notebooks/denmark_inequality_project.html">explainer notebook</a>.</p>
+      <p>Sources: Statistics Denmark StatBank tables IFOR41, IFOR32, IFOR12P, AUP02, HFUDD11, HISBK, BOL101, and BOLRD; Danish municipality GeoJSON from Dataforsyningen. Reproduce with <code>python scripts/build_project.py</code>. Detailed analysis is in the <a href="notebooks/denmark_inequality_project.html">explainer notebook</a>.</p>
     </div>
   </footer>
 </body>
