@@ -132,6 +132,10 @@
       height: 940px;
     }
 
+    .housing-frame {
+      height: 760px;
+    }
+
     .rank-frame,
     .scatter-frame {
       height: 660px;
@@ -146,7 +150,7 @@
 
     .glossary {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       margin-top: 20px;
     }
@@ -276,6 +280,10 @@
         height: 820px;
       }
 
+      .housing-frame {
+        height: 680px;
+      }
+
       .rank-frame,
       .scatter-frame {
         height: 620px;
@@ -288,7 +296,7 @@
     <div class="wrap hero">
       <p class="eyebrow">Denmark inequality project</p>
       <h1>Municipal inequality is not the same as municipal hardship</h1>
-      <p class="deck">We look at Danish municipalities to show how inequality has risen nationally, how the local distribution has widened, and why the highest-inequality places are not always the places with the most poverty and unemployment.</p>
+      <p class="deck">We look at Danish municipalities to show how inequality has risen nationally, how the local distribution has widened, and why housing tenure helps explain why the highest-inequality places are not always the places with the most poverty and unemployment.</p>
       <div class="meta-links" aria-label="Project links">
         <a href="notebooks/denmark_inequality_project.html">Explainer notebook</a>
         <a href="data/processed/municipality_year.csv">Processed data</a>
@@ -300,13 +308,14 @@
     <section>
       <h2>The question</h2>
       <p>We ask how unequal Danish municipalities are, how that has changed over time, and whether inequality points to the same places as poverty and unemployment. The pattern is more nuanced than one map or national trend line can show. Inequality and hardship overlap in some municipalities, but they often do not.</p>
-      <p>The data comes from official Statistics Denmark StatBank tables for inequality, decile incomes, poverty, unemployment, education, and life expectancy.</p>
-      <p>We use a municipality-year panel covering 98 Danish municipalities plus a national benchmark. The shared income panel runs from 1987 to 2024, the poverty series begins in 2000, and monthly unemployment is averaged into annual municipal rates. These are descriptive results; we do not draw causal conclusions.</p>
+      <p>The data comes from official Statistics Denmark StatBank tables for inequality, decile incomes, poverty, unemployment, education, life expectancy, and housing tenure.</p>
+      <p>We use a municipality-year panel covering 98 Danish municipalities plus a national benchmark. The shared income panel runs from 1987 to 2024, the poverty series begins in 2000, and monthly unemployment is averaged into annual municipal rates. Housing tenure is matched only by the same municipality-year, so newer 2026 housing observations are not carried back into the 2024 income panel. These are descriptive results; we do not draw causal conclusions.</p>
       <div class="glossary" aria-label="Plain-language glossary">
         <p class="term"><strong>Gini</strong>A 0 to 100 income-inequality measure based on equivalized disposable income. Higher values mean incomes are more spread out.</p>
         <p class="term"><strong>P90/P10</strong>The income near the top of the distribution divided by income near the bottom, using the 90th and 10th percentiles.</p>
         <p class="term"><strong>Poverty60</strong>The share of people in families below 60 percent of the national median income in the StatBank risk-of-poverty table.</p>
         <p class="term"><strong>Unemployment</strong>The unemployed share of the labor force, averaged across monthly municipal observations.</p>
+        <p class="term"><strong>OwnerShare</strong>The share of owner-occupied dwellings among dwellings with a known owner or tenant tenure status.</p>
       </div>
     </section>
 
@@ -391,12 +400,22 @@
     </section>
 
     <section>
+      <h2>Housing gives the split a structure</h2>
+      <p>Housing tenure helps connect the ranked contrast to a material local structure. In 2024, owner-occupied dwellings make up only 19.3 percent of known-tenure dwellings in Copenhagen and 22.7 percent in Frederiksberg, while the median municipality is 58.1 percent owner-occupied and Lejre reaches 75.9 percent.</p>
+      <p>The relationship is meaningful but not complete. Across municipalities, OwnerShare is negatively associated with Poverty60 (R&sup2; = 0.304) and unemployment (R&sup2; = 0.220), while the OwnerShare-Gini relationship is much weaker (R&sup2; = 0.029). That fits the red thread: tenure helps explain where hardship concentrates, but Gini still captures a different distributional shape.</p>
+      <div class="figure">
+        <iframe class="housing-frame" src="visualizations/dk_housing_tenure_bridge.html" title="Housing tenure and hardship bridge visualization" loading="lazy"></iframe>
+        <p class="caption">Figure 5. Owner-occupied dwelling share by municipality and its relationship to Poverty60 in 2024. The scatter colors points by unemployment and includes a fitted line for the descriptive cross-sectional relationship. Source: Statistics Denmark StatBank tables BOL101, IFOR12P, AUP02, and IFOR41.</p>
+      </div>
+    </section>
+
+    <section>
       <h2>Poverty and unemployment move together</h2>
-      <p>The final chart shows the clearest latest-year relationship. Municipalities with higher risk-of-poverty rates also tend to have higher unemployment. In 2024, the fitted line explains about 53 percent of the cross-municipality variation in unemployment.</p>
+      <p>The next chart shows the clearest latest-year hardship relationship. Municipalities with higher risk-of-poverty rates also tend to have higher unemployment. In 2024, the fitted line explains about 53 percent of the cross-municipality variation in unemployment.</p>
       <p>By contrast, the latest municipal Gini-poverty relationship is basically flat, with an R&sup2; close to zero. This is why Gini is useful for inequality but not enough for local hardship.</p>
       <div class="figure">
         <iframe class="scatter-frame" src="visualizations/dk_poverty_unemployment_scatter.html" title="Municipal poverty and unemployment scatterplot" loading="lazy"></iframe>
-        <p class="caption">Figure 5. Each point is a municipality in 2024. The fitted line reports the average cross-sectional relationship in the latest complete year; it should not be interpreted as a causal estimate. Source: Statistics Denmark StatBank tables IFOR12P, AUP02, and IFOR41.</p>
+        <p class="caption">Figure 6. Each point is a municipality in 2024. The fitted line reports the average cross-sectional relationship in the latest complete year; it should not be interpreted as a causal estimate. Source: Statistics Denmark StatBank tables IFOR12P, AUP02, and IFOR41.</p>
       </div>
     </section>
 
@@ -406,7 +425,7 @@
       <p>This does not prove a causal pathway. It does show that the main contrast is not driven only by the 2024 endpoint.</p>
       <figure class="figure">
         <img src="images/dk_correlation_robustness.png" alt="Line chart of municipal relationship R squared values over time">
-        <figcaption class="caption">Figure 6. Year-by-year cross-sectional R&sup2; across Danish municipalities for Gini versus Poverty60 and Poverty60 versus unemployment. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</figcaption>
+        <figcaption class="caption">Figure 7. Year-by-year cross-sectional R&sup2; across Danish municipalities for Gini versus Poverty60 and Poverty60 versus unemployment. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</figcaption>
       </figure>
     </section>
 
@@ -414,8 +433,8 @@
       <h2>What to take from it</h2>
       <div class="takeaways">
         <p class="takeaway"><strong>Inequality rose, but unevenly.</strong>The national trend is upward, and the municipal distribution shows that local spread matters.</p>
-        <p class="takeaway"><strong>Hardship needs its own measures.</strong>High Gini municipalities are not automatically the highest-poverty or highest-unemployment municipalities.</p>
-        <p class="takeaway"><strong>We keep the claims descriptive.</strong>The charts show comparisons and patterns, not causal effects from one municipal condition to another.</p>
+        <p class="takeaway"><strong>Hardship clusters differently.</strong>High-poverty municipalities are often more renter-heavy, while high Gini places are not automatically high-hardship places.</p>
+        <p class="takeaway"><strong>Housing helps, but descriptively.</strong>Tenure clarifies the split without proving that housing composition causes poverty or unemployment.</p>
       </div>
     </section>
 
@@ -423,7 +442,7 @@
       <h2>Limits</h2>
       <p>The merged panel ends in 2024 because the income inequality and poverty tables end in 2024. Monthly unemployment and education may have newer observations in the raw source systems, but using them would not extend the complete income-poverty panel used here.</p>
       <p>Life expectancy is measured over rolling periods and is more volatile in small municipalities. The 2024 merged panel is missing life expectancy for four small island municipalities: &AElig;r&oslash;, Fan&oslash;, Sams&oslash;, and L&aelig;s&oslash;. StatBank also reports one implausible S80/S20 value: Rudersdal has a negative value in 1994. We flag it and do not base any argument on it.</p>
-      <p>Open municipal wealth and household consumption data could add context, but we do not include them here. The current official municipality-year panel is enough to support the main descriptive finding without widening the project too much.</p>
+      <p>BOL101 housing tenure is available for 2010-2020 and 2023-2026 in the current extract; 2021 and 2022 are closed in the source because of BBR data errors. We match housing only by the same municipality-year and do not add a housing-cost proxy, because a robust municipal cost series is outside this descriptive scope.</p>
     </section>
 
     <section>
@@ -435,6 +454,7 @@
         <li>Statistics Denmark. (n.d.). <em>Unemployed in percent of the labour force (AUP02)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/AUP02">https://www.statbank.dk/AUP02</a></li>
         <li>Statistics Denmark. (n.d.). <em>Educational attainment (HFUDD11)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HFUDD11">https://www.statbank.dk/HFUDD11</a></li>
         <li>Statistics Denmark. (n.d.). <em>Life expectancy for newborn babies (HISBK)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HISBK">https://www.statbank.dk/HISBK</a></li>
+        <li>Statistics Denmark. (n.d.). <em>Dwellings (BOL101)</em> [Data set]. StatBank Denmark. Retrieved May 13, 2026, from <a href="https://www.statbank.dk/BOL101">https://www.statbank.dk/BOL101</a></li>
         <li>Dataforsyningen. (n.d.). <em>Kommuner</em> [GeoJSON data set]. Retrieved May 12, 2026, from <a href="https://api.dataforsyningen.dk/kommuner?format=geojson">https://api.dataforsyningen.dk/kommuner?format=geojson</a></li>
         <li>Segel, E., &amp; Heer, J. (2010). Narrative visualization: Telling stories with data. <em>IEEE Transactions on Visualization and Computer Graphics, 16</em>(6), 1139-1148. <a href="https://doi.org/10.1109/TVCG.2010.179">https://doi.org/10.1109/TVCG.2010.179</a></li>
       </ol>
@@ -443,7 +463,7 @@
 
   <footer>
     <div class="wrap">
-      <p>Sources: Statistics Denmark StatBank tables IFOR41, IFOR32, IFOR12P, AUP02, HFUDD11, and HISBK; Danish municipality GeoJSON from Dataforsyningen. Reproduce with <code>python scripts/build_project.py</code>. Detailed analysis is in the <a href="notebooks/denmark_inequality_project.html">explainer notebook</a>.</p>
+      <p>Sources: Statistics Denmark StatBank tables IFOR41, IFOR32, IFOR12P, AUP02, HFUDD11, HISBK, and BOL101; Danish municipality GeoJSON from Dataforsyningen. Reproduce with <code>python scripts/build_project.py</code>. Detailed analysis is in the <a href="notebooks/denmark_inequality_project.html">explainer notebook</a>.</p>
     </div>
   </footer>
 </body>

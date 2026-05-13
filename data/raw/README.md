@@ -14,6 +14,7 @@ The downloader writes StatBank CSVs with code-and-label values:
 - `AUP02.csv`
 - `HFUDD11.csv`
 - `HISBK.csv`
+- `BOL101.csv`
 
 It also writes a compact `denmark_municipalities.geojson` for the Plotly
 choropleth and metadata JSON files under `data/raw/metadata/`. The geometry is

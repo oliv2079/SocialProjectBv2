@@ -74,6 +74,39 @@
       "r": 0.466184070605608,
       "r2": 0.21732758768641453,
       "p_value": 2.186146769123936e-06
+    },
+    {
+      "Year": 2024,
+      "x": "OwnerShare",
+      "y": "Poverty60",
+      "n": 98,
+      "slope": -0.14792098945077548,
+      "intercept": 19.878355652456314,
+      "r": -0.5514047663158755,
+      "r2": 0.3040472163158653,
+      "p_value": 4.003236718165368e-09
+    },
+    {
+      "Year": 2024,
+      "x": "OwnerShare",
+      "y": "UnemploymentRate",
+      "n": 98,
+      "slope": -0.02467099389964462,
+      "intercept": 4.008169136878886,
+      "r": -0.46926977798532976,
+      "r2": 0.22021412453040068,
+      "p_value": 1.0928683318632089e-06
+    },
+    {
+      "Year": 2024,
+      "x": "OwnerShare",
+      "y": "Gini",
+      "n": 98,
+      "slope": -0.06662967196805264,
+      "intercept": 31.332066503988347,
+      "r": -0.1688425937492902,
+      "r2": 0.02850782146398785,
+      "p_value": 0.09651967898192652
     }
   ],
   "correlation_over_time": [
@@ -826,9 +859,189 @@
       }
     ]
   },
+  "housing_summary": {
+    "year": 2024,
+    "count": 98,
+    "owner_share": {
+      "min": 19.264485251267807,
+      "q1": 50.79545315779556,
+      "median": 58.13287996200763,
+      "q3": 63.06916266843727,
+      "max": 75.94415005467239,
+      "mean": 55.85433921528405
+    },
+    "lowest_owner_share": [
+      {
+        "Municipality": "Copenhagen",
+        "OwnerShare": 19.264485251267807,
+        "TenantShare": 80.7355147487322,
+        "Poverty60": 20.6,
+        "UnemploymentRate": 3.5833333333333335,
+        "Gini": 34.97
+      },
+      {
+        "Municipality": "Frederiksberg",
+        "OwnerShare": 22.741530740276037,
+        "TenantShare": 77.25846925972397,
+        "Poverty60": 14.9,
+        "UnemploymentRate": 3.1999999999999997,
+        "Gini": 36.54
+      },
+      {
+        "Municipality": "Br\u00f8ndby",
+        "OwnerShare": 26.904470478521887,
+        "TenantShare": 73.09552952147811,
+        "Poverty60": 17.4,
+        "UnemploymentRate": 3.783333333333333,
+        "Gini": 26.16
+      },
+      {
+        "Municipality": "Herlev",
+        "OwnerShare": 31.37283447372252,
+        "TenantShare": 68.62716552627748,
+        "Poverty60": 11.3,
+        "UnemploymentRate": 2.466666666666667,
+        "Gini": 27.15
+      },
+      {
+        "Municipality": "Albertslund",
+        "OwnerShare": 32.47505632442871,
+        "TenantShare": 67.5249436755713,
+        "Poverty60": 15.8,
+        "UnemploymentRate": 3.2583333333333333,
+        "Gini": 24.66
+      },
+      {
+        "Municipality": "Ballerup",
+        "OwnerShare": 32.99710624224886,
+        "TenantShare": 67.00289375775114,
+        "Poverty60": 11.1,
+        "UnemploymentRate": 2.3416666666666663,
+        "Gini": 26.72
+      },
+      {
+        "Municipality": "Aarhus",
+        "OwnerShare": 33.85040837919085,
+        "TenantShare": 66.14959162080915,
+        "Poverty60": 20.1,
+        "UnemploymentRate": 3.6833333333333336,
+        "Gini": 33.43
+      },
+      {
+        "Municipality": "Glostrup",
+        "OwnerShare": 35.630926331145155,
+        "TenantShare": 64.36907366885485,
+        "Poverty60": 12.9,
+        "UnemploymentRate": 2.858333333333333,
+        "Gini": 26.2
+      }
+    ],
+    "highest_owner_share": [
+      {
+        "Municipality": "Lejre",
+        "OwnerShare": 75.94415005467239,
+        "TenantShare": 24.055849945327616,
+        "Poverty60": 7.4,
+        "UnemploymentRate": 2.0833333333333335,
+        "Gini": 25.36
+      },
+      {
+        "Municipality": "L\u00e6s\u00f8",
+        "OwnerShare": 74.08163265306122,
+        "TenantShare": 25.918367346938776,
+        "Poverty60": 14.3,
+        "UnemploymentRate": 4.716666666666667,
+        "Gini": 25.41
+      },
+      {
+        "Municipality": "Drag\u00f8r",
+        "OwnerShare": 72.5635943178064,
+        "TenantShare": 27.436405682193595,
+        "Poverty60": 5.7,
+        "UnemploymentRate": 1.6916666666666667,
+        "Gini": 28.86
+      },
+      {
+        "Municipality": "Gribskov",
+        "OwnerShare": 72.22823147647377,
+        "TenantShare": 27.77176852352623,
+        "Poverty60": 9.6,
+        "UnemploymentRate": 1.9583333333333333,
+        "Gini": 27.68
+      },
+      {
+        "Municipality": "Egedal",
+        "OwnerShare": 71.84359382722829,
+        "TenantShare": 28.15640617277171,
+        "Poverty60": 6.1,
+        "UnemploymentRate": 1.75,
+        "Gini": 23.85
+      },
+      {
+        "Municipality": "Aller\u00f8d",
+        "OwnerShare": 70.26159221833979,
+        "TenantShare": 29.738407781660214,
+        "Poverty60": 5.4,
+        "UnemploymentRate": 1.5083333333333335,
+        "Gini": 27.29
+      },
+      {
+        "Municipality": "Rebild",
+        "OwnerShare": 69.5187165775401,
+        "TenantShare": 30.481283422459892,
+        "Poverty60": 7.6,
+        "UnemploymentRate": 2.1,
+        "Gini": 25.87
+      },
+      {
+        "Municipality": "Favrskov",
+        "OwnerShare": 68.61720149073133,
+        "TenantShare": 31.38279850926867,
+        "Poverty60": 7.4,
+        "UnemploymentRate": 2.266666666666667,
+        "Gini": 24.41
+      }
+    ],
+    "relationships": [
+      {
+        "Year": 2024,
+        "x": "OwnerShare",
+        "y": "Poverty60",
+        "n": 98,
+        "slope": -0.14792098945077548,
+        "intercept": 19.878355652456314,
+        "r": -0.5514047663158755,
+        "r2": 0.3040472163158653,
+        "p_value": 4.003236718165368e-09
+      },
+      {
+        "Year": 2024,
+        "x": "OwnerShare",
+        "y": "UnemploymentRate",
+        "n": 98,
+        "slope": -0.02467099389964462,
+        "intercept": 4.008169136878886,
+        "r": -0.46926977798532976,
+        "r2": 0.22021412453040068,
+        "p_value": 1.0928683318632089e-06
+      },
+      {
+        "Year": 2024,
+        "x": "OwnerShare",
+        "y": "Gini",
+        "n": 98,
+        "slope": -0.06662967196805264,
+        "intercept": 31.332066503988347,
+        "r": -0.1688425937492902,
+        "r2": 0.02850782146398785,
+        "p_value": 0.09651967898192652
+      }
+    ]
+  },
   "data_caveats": {
     "panel_end_year": 2024,
     "panel_end_note": "The merged panel ends in 2024 because the income inequality and poverty source tables end in 2024 in the current extract.",
+    "housing_note": "BOL101 housing tenure is matched by the same municipality-year only; 2026 housing observations are not carried back into the 2024 income panel.",
     "life_expectancy_missing_latest_year": [
       {
         "MunicipalityCode": "492",

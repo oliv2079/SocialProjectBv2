@@ -47,6 +47,11 @@ EXPECTED_PANEL_COLUMNS = [
     "UnemploymentRate",
     "TertiaryShare",
     "LifeExpectancy",
+    "OwnerOccupiedDwellings",
+    "TenantOccupiedDwellings",
+    "KnownTenureDwellings",
+    "OwnerShare",
+    "TenantShare",
 ]
 PANEL_KEYS = ["MunicipalityCode", "Municipality", "Year"]
 
@@ -241,18 +246,79 @@ def clean_life_expectancy() -> pd.DataFrame:
     return df[PANEL_KEYS + ["LifeExpectancy"]].sort_values(["MunicipalityCode", "Year"])
 
 
+def clean_housing() -> pd.DataFrame:
+    df = read_statbank_csv("BOL101")
+    df["MunicipalityCode"], df["Municipality"] = split_code_label(df[OMRAADE])
+    df["ResidentCode"], _ = split_code_label(df["BEBO"])
+    df["TenureCode"], _ = split_code_label(df["UDLFORH"])
+    df["TimeCode"], _ = split_code_label(df["TID"])
+    df["Year"] = parse_year_from_time_code(df["TimeCode"]).astype("Int64")
+    df["Dwellings"] = parse_number(df[VALUE_COL])
+    df = df[
+        (df["ResidentCode"] == "1000") & (df["TenureCode"].isin(["EJ", "LEJ"]))
+    ].copy()
+
+    housing = (
+        df.groupby(PANEL_KEYS + ["TenureCode"], as_index=False)["Dwellings"]
+        .sum()
+        .pivot_table(
+            index=PANEL_KEYS,
+            columns="TenureCode",
+            values="Dwellings",
+            aggfunc="sum",
+        )
+        .reset_index()
+        .rename_axis(None, axis=1)
+        .rename(
+            columns={
+                "EJ": "OwnerOccupiedDwellings",
+                "LEJ": "TenantOccupiedDwellings",
+            }
+        )
+    )
+
+    for column in ["OwnerOccupiedDwellings", "TenantOccupiedDwellings"]:
+        if column not in housing.columns:
+            housing[column] = np.nan
+
+    housing["KnownTenureDwellings"] = (
+        housing["OwnerOccupiedDwellings"] + housing["TenantOccupiedDwellings"]
+    )
+    valid_denominator = housing["KnownTenureDwellings"] > 0
+    housing["OwnerShare"] = np.where(
+        valid_denominator,
+        housing["OwnerOccupiedDwellings"] / housing["KnownTenureDwellings"] * 100,
+        np.nan,
+    )
+    housing["TenantShare"] = np.where(
+        valid_denominator,
+        housing["TenantOccupiedDwellings"] / housing["KnownTenureDwellings"] * 100,
+        np.nan,
+    )
+    columns = PANEL_KEYS + [
+        "OwnerOccupiedDwellings",
+        "TenantOccupiedDwellings",
+        "KnownTenureDwellings",
+        "OwnerShare",
+        "TenantShare",
+    ]
+    return housing[columns].sort_values(["MunicipalityCode", "Year"])
+
+
 def build_panel() -> tuple[pd.DataFrame, pd.DataFrame]:
     inequality = clean_inequality()
     poverty = clean_poverty()
     unemployment = clean_unemployment()
     education = clean_education()
     life = clean_life_expectancy()
+    housing = clean_housing()
     deciles = clean_deciles()
 
     panel = inequality.merge(poverty, on=PANEL_KEYS, how="left")
     panel = panel.merge(unemployment, on=PANEL_KEYS, how="left")
     panel = panel.merge(education, on=PANEL_KEYS, how="left")
     panel = panel.merge(life, on=PANEL_KEYS, how="left")
+    panel = panel.merge(housing, on=PANEL_KEYS, how="left")
 
     for column in EXPECTED_PANEL_COLUMNS:
         if column not in panel.columns:
@@ -828,6 +894,149 @@ def regression_summary(df: pd.DataFrame, x: str, y: str) -> dict[str, Any]:
     }
 
 
+def plot_housing_bridge(panel: pd.DataFrame) -> Path:
+    geojson = compact_geojson(load_geojson(), precision=3, tolerance=0.004)
+    year = latest_year_with(panel, ["OwnerShare", "Poverty60", "UnemploymentRate"])
+    data = municipal_rows(panel)
+    data = data[
+        (data["Year"] == year)
+        & data["OwnerShare"].notna()
+        & data["Poverty60"].notna()
+        & data["UnemploymentRate"].notna()
+    ].copy()
+    if data.empty:
+        raise ValueError("No housing observations available for the bridge figure.")
+
+    data = add_geo_code(data)
+    bounds = geojson_bounds(geojson)
+    center = {
+        "lon": (bounds["west"] + bounds["east"]) / 2,
+        "lat": (bounds["south"] + bounds["north"]) / 2,
+    }
+    map_bounds = {
+        "west": bounds["west"] - 0.35,
+        "east": bounds["east"] + 0.35,
+        "south": bounds["south"] - 0.2,
+        "north": bounds["north"] + 0.2,
+    }
+
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        specs=[[{"type": "map"}, {"type": "xy"}]],
+        column_widths=[0.48, 0.52],
+        horizontal_spacing=0.08,
+        subplot_titles=(
+            "Owner-occupied dwellings",
+            "Owner share and poverty",
+        ),
+    )
+    fig.add_trace(
+        go.Choroplethmap(
+            geojson=geojson,
+            featureidkey="properties.kode",
+            locations=data["MunicipalityCode4"],
+            z=data["OwnerShare"],
+            customdata=data[
+                [
+                    "Municipality",
+                    "OwnerShare",
+                    "TenantShare",
+                    "Poverty60",
+                    "UnemploymentRate",
+                ]
+            ].to_numpy(),
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>"
+                "Owner share: %{customdata[1]:.1f}%<br>"
+                "Tenant share: %{customdata[2]:.1f}%<br>"
+                "Poverty60: %{customdata[3]:.1f}%<br>"
+                "Unemployment: %{customdata[4]:.2f}%"
+                "<extra></extra>"
+            ),
+            colorscale="YlGnBu",
+            zmin=0,
+            zmax=100,
+            colorbar={"title": "Owner share", "ticksuffix": "%", "x": 0.47},
+            marker={
+                "line": {"color": "rgba(255,255,255,0.9)", "width": 0.7},
+                "opacity": 0.96,
+            },
+            name="Owner share",
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=data["OwnerShare"],
+            y=data["Poverty60"],
+            mode="markers",
+            marker={
+                "color": data["UnemploymentRate"],
+                "colorscale": "Tealrose",
+                "size": 9,
+                "opacity": 0.88,
+                "line": {"color": "rgba(255,255,255,0.9)", "width": 0.8},
+                "colorbar": {"title": "Unemployment", "ticksuffix": "%", "x": 1.02},
+            },
+            customdata=data[
+                ["Municipality", "Gini", "TenantShare", "UnemploymentRate"]
+            ].to_numpy(),
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>"
+                "Owner share: %{x:.1f}%<br>"
+                "Poverty60: %{y:.1f}%<br>"
+                "Tenant share: %{customdata[2]:.1f}%<br>"
+                "Unemployment: %{customdata[3]:.2f}%<br>"
+                "Gini: %{customdata[1]:.2f}"
+                "<extra></extra>"
+            ),
+            name="Municipalities",
+        ),
+        row=1,
+        col=2,
+    )
+
+    summary = regression_summary(data, "OwnerShare", "Poverty60")
+    if np.isfinite(summary["slope"]):
+        x_line = np.linspace(data["OwnerShare"].min(), data["OwnerShare"].max(), 100)
+        y_line = summary["intercept"] + summary["slope"] * x_line
+        fig.add_trace(
+            go.Scatter(
+                x=x_line,
+                y=y_line,
+                mode="lines",
+                name=f"Linear fit, R2={summary['r2']:.2f}",
+                line={"color": "#222222", "width": 2},
+                hovertemplate="Owner share: %{x:.1f}%<br>Poverty60: %{y:.1f}%<extra></extra>",
+            ),
+            row=1,
+            col=2,
+        )
+
+    fig.update_xaxes(
+        title_text="Owner-occupied dwellings", ticksuffix="%", row=1, col=2
+    )
+    fig.update_yaxes(title_text="Risk-of-poverty rate", ticksuffix="%", row=1, col=2)
+    fig.update_layout(
+        title=f"Housing tenure and municipal hardship, {year}",
+        margin={"r": 18, "t": 74, "l": 0, "b": 48},
+        autosize=True,
+        font={"family": "Arial, sans-serif"},
+        showlegend=True,
+        legend={"orientation": "h", "y": -0.12, "x": 0.53},
+        map={
+            "style": "white-bg",
+            "center": center,
+            "zoom": 4.7,
+            "bounds": map_bounds,
+        },
+    )
+    path = VIS_DIR / "dk_housing_tenure_bridge.html"
+    return write_plotly_html(fig, path)
+
+
 def calculate_regressions(panel: pd.DataFrame) -> pd.DataFrame:
     pairs = [
         ("Gini", "Poverty60"),
@@ -836,6 +1045,9 @@ def calculate_regressions(panel: pd.DataFrame) -> pd.DataFrame:
         ("Gini", "UnemploymentRate"),
         ("Gini", "TertiaryShare"),
         ("Gini", "LifeExpectancy"),
+        ("OwnerShare", "Poverty60"),
+        ("OwnerShare", "UnemploymentRate"),
+        ("OwnerShare", "Gini"),
     ]
     rows = []
     municipal = municipal_rows(panel)
@@ -973,6 +1185,56 @@ def plot_scatter(panel: pd.DataFrame) -> Path:
     return write_plotly_html(fig, path)
 
 
+def housing_summary(panel: pd.DataFrame, regressions: pd.DataFrame) -> dict[str, Any]:
+    try:
+        year = latest_year_with(
+            panel, ["OwnerShare", "Poverty60", "UnemploymentRate", "Gini"]
+        )
+    except ValueError:
+        return {}
+
+    data = municipal_rows(panel)
+    data = data[
+        (data["Year"] == year)
+        & data["OwnerShare"].notna()
+        & data["Poverty60"].notna()
+        & data["UnemploymentRate"].notna()
+        & data["Gini"].notna()
+    ].copy()
+    if data.empty:
+        return {}
+
+    relationship_rows = regressions[regressions["x"] == "OwnerShare"].copy()
+    relationship_rows = relationship_rows.replace({np.nan: None})
+    columns = [
+        "Municipality",
+        "OwnerShare",
+        "TenantShare",
+        "Poverty60",
+        "UnemploymentRate",
+        "Gini",
+    ]
+    return {
+        "year": int(year),
+        "count": int(len(data)),
+        "owner_share": {
+            "min": float(data["OwnerShare"].min()),
+            "q1": float(data["OwnerShare"].quantile(0.25)),
+            "median": float(data["OwnerShare"].median()),
+            "q3": float(data["OwnerShare"].quantile(0.75)),
+            "max": float(data["OwnerShare"].max()),
+            "mean": float(data["OwnerShare"].mean()),
+        },
+        "lowest_owner_share": data.nsmallest(8, "OwnerShare")[columns].to_dict(
+            orient="records"
+        ),
+        "highest_owner_share": data.nlargest(8, "OwnerShare")[columns].to_dict(
+            orient="records"
+        ),
+        "relationships": relationship_rows.to_dict(orient="records"),
+    }
+
+
 def write_summary(
     panel: pd.DataFrame, regressions: pd.DataFrame, correlations: pd.DataFrame
 ) -> Path:
@@ -1000,11 +1262,16 @@ def write_summary(
         "correlation_over_time": correlations.to_dict(orient="records"),
         "benchmark_distribution_stats": municipal_distribution_stats(panel),
         "latest_rank_summary": latest_rank_summary(panel),
+        "housing_summary": housing_summary(panel, regressions),
         "data_caveats": {
             "panel_end_year": int(panel["Year"].max()),
             "panel_end_note": (
                 "The merged panel ends in 2024 because the income inequality "
                 "and poverty source tables end in 2024 in the current extract."
+            ),
+            "housing_note": (
+                "BOL101 housing tenure is matched by the same municipality-year only; "
+                "2026 housing observations are not carried back into the 2024 income panel."
             ),
             "life_expectancy_missing_latest_year": life_missing.to_dict(
                 orient="records"
@@ -1030,6 +1297,7 @@ def make_figures(
         "correlation_robustness": plot_correlation_over_time(correlations),
         "map": plot_map(panel),
         "rank_comparison": plot_rank_comparison(panel),
+        "housing_bridge": plot_housing_bridge(panel),
         "scatter": plot_scatter(panel),
         "summary": write_summary(panel, regressions, correlations),
     }

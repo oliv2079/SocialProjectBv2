@@ -10,4 +10,5 @@ Primary website visualizations:
 
 - `dk_inequality_map.html`
 - `dk_inequality_poverty_rank.html`
+- `dk_housing_tenure_bridge.html`
 - `dk_poverty_unemployment_scatter.html`

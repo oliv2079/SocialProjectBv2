@@ -41,6 +41,7 @@ TABLES = {
     "AUP02": "Unemployed in percent of the labour force",
     "HFUDD11": "Educational attainment, ages 15-69",
     "HISBK": "Life expectancy for newborn babies",
+    "BOL101": "Dwellings by region, resident type, tenure and time",
 }
 
 OMRAADE = "OMR\u00c5DE"
@@ -133,6 +134,17 @@ def variables_payload(
         return [
             {"code": OMRAADE, "values": keep_available(info, OMRAADE, municipality_values)},
             {"code": KON, "values": ["TOT"]},
+            {"code": "Tid", "values": all_time},
+        ]
+
+    if table == "BOL101":
+        return [
+            {"code": OMRAADE, "values": keep_available(info, OMRAADE, municipality_values)},
+            {"code": "BEBO", "values": ["1000"]},
+            {"code": "ANVENDELSE", "values": values_for(info, "ANVENDELSE")},
+            {"code": "UDLFORH", "values": ["EJ", "LEJ"]},
+            {"code": "EJER", "values": values_for(info, "EJER")},
+            {"code": "OPF\u00d8RELSES\u00c5R", "values": values_for(info, "OPF\u00d8RELSES\u00c5R")},
             {"code": "Tid", "values": all_time},
         ]
 

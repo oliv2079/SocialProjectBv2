@@ -16,5 +16,5 @@ Expected outputs:
 - `summary_stats.json`
 
 `summary_stats.json` also records the benchmark municipal distribution stats,
-latest-year ranked inequality/poverty lists, over-time relationship checks, and
-key data caveats used in the website and notebook.
+latest-year ranked inequality/poverty lists, housing tenure summary, over-time
+relationship checks, and key data caveats used in the website and notebook.

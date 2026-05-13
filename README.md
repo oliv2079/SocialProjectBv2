@@ -76,6 +76,8 @@ Core StatBank tables:
 - `AUP02`: unemployed in percent of the labour force.
 - `HFUDD11`: educational attainment, ages 15-69.
 - `HISBK`: life expectancy for newborn babies.
+- `BOL101`: dwellings by region, resident type, tenure, ownership, use, year of
+  construction, and time.
 
 Municipality boundaries are downloaded from the public Dataforsyningen API.
 
@@ -85,18 +87,21 @@ The main panel is municipality-year level. Monthly unemployment is aggregated
 to annual means. Life expectancy uses the end year of the published rolling
 period. Tertiary education share is calculated as short-cycle higher education,
 vocational bachelor, bachelor, master, and PhD categories divided by the total
-education population.
+education population. Housing tenure is calculated from BOL101 as owner- and
+tenant-occupied dwellings with registered population, matched only by the same
+municipality-year.
 
 The analysis uses the tools expected in the course: distribution summaries,
 Pearson-style correlations, simple fitted lines, slope, intercept, and `R2`.
 These results are descriptive; we do not draw causal conclusions. The website
-uses six focused visualizations: a national trend, a municipal distribution
+uses seven focused visualizations: a national trend, a municipal distribution
 view, an interactive municipal inequality map, an interactive ranked comparison
-of inequality and poverty, an interactive poverty-unemployment scatter, and an
-over-time `R2` robustness figure. The main insight is that municipal inequality
-and municipal hardship are related, but they often point to different places:
-the latest Gini-poverty cross-section is nearly flat, while poverty-unemployment
-is strong.
+of inequality and poverty, an interactive housing-tenure bridge, an interactive
+poverty-unemployment scatter, and an over-time `R2` robustness figure. The main
+insight is that municipal inequality and municipal hardship are related, but
+they often point to different places: the latest Gini-poverty cross-section is
+nearly flat, while poverty-unemployment is strong and renter-heavy housing
+composition helps explain where hardship concentrates.
 
 ## Course Alignment
 
@@ -111,9 +116,9 @@ is strong.
 - **Week 3-4 statistics**: the analysis uses distributions, Pearson-style
   correlations, simple linear fits, `R2`, and non-causal interpretation.
 - **Week 5-6 visualization**: the site includes a Plotly choropleth map, an
-  interactive ranked comparison, and a separate interactive Plotly scatterplot
-  with hover details and a fitted line. A static robustness figure checks
-  whether the key relationships persist over time.
+  interactive ranked comparison, a housing bridge view, and a separate
+  interactive Plotly scatterplot with hover details and a fitted line. A static
+  robustness figure checks whether the key relationships persist over time.
 - **Week 7-8 website/story**: the website follows the Segel and Heer magazine
   genre, uses a guided six-visual sequence, includes captions, and targets a
   general reader rather than a technical audience.
@@ -126,9 +131,14 @@ is strong.
   municipalities: Ærø, Fanø, Samsø, and Læsø.
 - StatBank reports one implausible negative S80/S20 value for Rudersdal in
   1994. We flag it and do not base any argument on it.
-- Open municipal wealth and household consumption data are useful context, but
-  they are not included because the current municipality-year panel is already
-  enough to support the main descriptive finding.
+- BOL101 housing tenure is available for 2010-2020 and 2023-2026 in the current
+  extract. The 2021 and 2022 housing years are closed by Statistics Denmark due
+  to BBR data errors, and 2026 housing observations are not carried back into
+  the 2024 income panel.
+- Open municipal wealth, housing-cost, and household consumption data are
+  useful context, but they are not included because the current
+  municipality-year panel is already enough to support the main descriptive
+  finding.
 
 ## Reproducibility and Submission Notes
 

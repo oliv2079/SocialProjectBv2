@@ -7519,7 +7519,7 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="Municipal-Inequality-and-Hardship-in-Denmark">Municipal Inequality and Hardship in Denmark<a class="anchor-link" href="#Municipal-Inequality-and-Hardship-in-Denmark">¶</a></h1><p><a href="../index.html">Back to website</a></p>
 <p><strong>Research question:</strong> How unequal are Danish municipalities, how has that changed over time, and why are the municipalities with the highest income inequality not always the same as the municipalities facing the strongest poverty and unemployment pressure?</p>
-<p>This explainer notebook supports the final website. It contains the data work, validation checks, distributional analysis, visualization choices, and interpretation notes behind the public page.</p>
+<p>This explainer notebook supports the final website. It contains the data work, validation checks, distributional analysis, housing-tenure bridge, visualization choices, and interpretation notes behind the public page.</p>
 </div>
 </div>
 </div>
@@ -7530,9 +7530,9 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-Motivation">1. Motivation<a class="anchor-link" href="#1.-Motivation">¶</a></h2><p>We write the website for a non-technical reader who wants to understand whether Danish inequality is only a national trend or also differs by municipality. We use a magazine-style sequence instead of a dashboard: national trend, municipal distribution, municipal map, ranked comparison, poverty-unemployment scatterplot, and an over-time robustness check. This follows Segel and Heer's idea that a data story can guide attention while still giving readers room to inspect details (2010).</p>
-<p>The main claim is simple: municipal inequality is not the same as municipal hardship. Gini is useful for comparing income distributions, but the latest municipal Gini-poverty relationship is nearly flat, while poverty and unemployment move together much more strongly. Readers should leave with that distinction, not only with the fact that inequality has risen.</p>
-<p>By the end, a general reader should be able to explain why a wealthy, high-Gini municipality can look very different from a high-poverty municipality, why the map should not be read alone, and why we keep the claims descriptive rather than causal.</p>
+<h2 id="1.-Motivation">1. Motivation<a class="anchor-link" href="#1.-Motivation">¶</a></h2><p>We write the website for a non-technical reader who wants to understand whether Danish inequality is only a national trend or also differs by municipality. We use a magazine-style sequence instead of a dashboard: national trend, municipal distribution, municipal map, ranked comparison, housing-tenure bridge, poverty-unemployment scatterplot, and an over-time robustness check. This follows Segel and Heer's idea that a data story can guide attention while still giving readers room to inspect details (2010).</p>
+<p>The main claim is simple: municipal inequality is not the same as municipal hardship. Gini is useful for comparing income distributions, but the latest municipal Gini-poverty relationship is nearly flat, while poverty and unemployment move together much more strongly. Housing tenure helps explain where hardship concentrates: renter-heavy municipalities tend to have higher poverty and unemployment, while owner-heavy municipalities often sit lower on those hardship measures.</p>
+<p>By the end, a general reader should be able to explain why a wealthy, high-Gini municipality can look very different from a high-poverty municipality, why housing tenure is a useful bridge but not a causal proof, why the map should not be read alone, and why we keep the claims descriptive rather than causal.</p>
 </div>
 </div>
 </div>
@@ -7551,9 +7551,10 @@ a.anchor-link {
 <li><code>AUP02</code>: monthly unemployed in percent of the labour force.</li>
 <li><code>HFUDD11</code>: educational attainment for ages 15-69.</li>
 <li><code>HISBK</code>: life expectancy for newborn babies.</li>
+<li><code>BOL101</code>: dwellings with registered population by municipality and tenure.</li>
 </ul>
 <p>Municipality boundaries come from the public Dataforsyningen municipality GeoJSON endpoint. We use the checked-in local extract of the data tables, with APA-style source entries and retrieval dates listed in the references.</p>
-<p>We chose these tables because they are official, people-focused, municipality-level sources with enough overlap for the course workflow: inspect the raw schemas, clean and merge tabular data, check missingness, visualize distributions and relationships, and publish a one-page public story. The unit of analysis is municipality-year, with a national row kept for national trend plots and removed for municipal cross-sectional analysis.</p>
+<p>We chose these tables because they are official, municipality-level sources with enough overlap for the course workflow: inspect the raw schemas, clean and merge tabular data, check missingness, visualize distributions and relationships, and publish a one-page public story. The unit of analysis is municipality-year, with a national row kept for national trend plots and removed for municipal cross-sectional analysis. Housing tenure is matched only by same municipality-year, so newer 2026 housing values are not carried back into the 2024 income panel.</p>
 </div>
 </div>
 </div>
@@ -7620,6 +7621,7 @@ a.anchor-link {
 <li>pivots inequality and poverty indicators into a municipality-year panel,</li>
 <li>aggregates monthly unemployment into annual municipal means,</li>
 <li>calculates tertiary education share from education counts,</li>
+<li>aggregates BOL101 owner- and tenant-occupied dwellings into <code>OwnerShare</code> and <code>TenantShare</code>,</li>
 <li>exports processed CSVs and website-ready visualizations.</li>
 </ul>
 </div>
@@ -7757,11 +7759,17 @@ Decile rows: 37,620
 <tr>
 <th>11</th>
 <td>figure</td>
+<td>housing_bridge</td>
+<td>visualizations/dk_housing_tenure_bridge.html</td>
+</tr>
+<tr>
+<th>12</th>
+<td>figure</td>
 <td>scatter</td>
 <td>visualizations/dk_poverty_unemployment_scatter.html</td>
 </tr>
 <tr>
-<th>12</th>
+<th>13</th>
 <td>figure</td>
 <td>summary</td>
 <td>data/processed/summary_stats.json</td>
@@ -7780,8 +7788,8 @@ Decile rows: 37,620
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Basic-stats">5. Basic stats<a class="anchor-link" href="#5.-Basic-stats">¶</a></h2><p>We check that the data has the expected coverage: 99 geographies, 38 years in the core income tables, and a complete 2024 cross-section for the main inequality, poverty, unemployment, and education measures. Life expectancy is present for most municipalities but is missing for four small island municipalities in the latest merged year.</p>
-<p>We also add a distribution table for shape, spread, tails, and outliers. It shows benchmark-year municipal distributions before we move into geography and ranked comparison.</p>
+<h2 id="5.-Basic-stats">5. Basic stats<a class="anchor-link" href="#5.-Basic-stats">¶</a></h2><p>We check that the data has the expected coverage: 99 geographies, 38 years in the core income tables, and a complete 2024 cross-section for the main inequality, poverty, unemployment, education, and housing-tenure measures. Life expectancy is present for most municipalities but is missing for four small island municipalities in the latest merged year.</p>
+<p>We also add distribution and ranked tables for shape, spread, tails, and outliers. They show benchmark-year municipal distributions, the high-inequality/high-poverty contrast, and the housing-tenure bridge before we move into visual interpretation.</p>
 </div>
 </div>
 </div>
@@ -7867,7 +7875,7 @@ Decile rows: 37,620
 <th>0</th>
 <td>municipality_year</td>
 <td>3762</td>
-<td>12</td>
+<td>17</td>
 </tr>
 <tr>
 <th>1</th>
@@ -8026,6 +8034,31 @@ Decile rows: 37,620
 <td>LifeExpectancy</td>
 <td>47.0</td>
 </tr>
+<tr>
+<th>11</th>
+<td>OwnerOccupiedDwellings</td>
+<td>65.8</td>
+</tr>
+<tr>
+<th>12</th>
+<td>TenantOccupiedDwellings</td>
+<td>65.8</td>
+</tr>
+<tr>
+<th>13</th>
+<td>KnownTenureDwellings</td>
+<td>65.8</td>
+</tr>
+<tr>
+<th>14</th>
+<td>OwnerShare</td>
+<td>65.8</td>
+</tr>
+<tr>
+<th>15</th>
+<td>TenantShare</td>
+<td>65.8</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -8053,6 +8086,8 @@ Decile rows: 37,620
     <span class="p">(</span><span class="s2">"UnemploymentRate"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"TertiaryShare"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"LifeExpectancy"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"TenantShare"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
 <span class="p">]:</span>
     <span class="n">series</span> <span class="o">=</span> <span class="n">municipality_year</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
     <span class="n">bad</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">series</span> <span class="o">&lt;</span> <span class="n">low</span><span class="p">]</span>
@@ -8073,6 +8108,11 @@ Decile rows: 37,620
 <span class="n">negative_s80s20</span> <span class="o">=</span> <span class="n">municipal</span><span class="p">[</span><span class="n">municipal</span><span class="p">[</span><span class="s2">"S80S20"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">][</span>
     <span class="p">[</span><span class="s2">"Year"</span><span class="p">,</span> <span class="s2">"MunicipalityCode"</span><span class="p">,</span> <span class="s2">"Municipality"</span><span class="p">,</span> <span class="s2">"S80S20"</span><span class="p">]</span>
 <span class="p">]</span>
+<span class="n">latest_housing</span> <span class="o">=</span> <span class="n">municipal</span><span class="p">[</span>
+    <span class="p">(</span><span class="n">municipal</span><span class="p">[</span><span class="s2">"Year"</span><span class="p">]</span> <span class="o">==</span> <span class="n">latest_year</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">municipal</span><span class="p">[</span><span class="s2">"OwnerShare"</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span>
+<span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">housing_share_sum</span> <span class="o">=</span> <span class="n">latest_housing</span><span class="p">[</span><span class="s2">"OwnerShare"</span><span class="p">]</span> <span class="o">+</span> <span class="n">latest_housing</span><span class="p">[</span><span class="s2">"TenantShare"</span><span class="p">]</span>
+<span class="n">zero_housing_denominators</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">latest_housing</span><span class="p">[</span><span class="s2">"KnownTenureDwellings"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Duplicate municipality-year keys:"</span><span class="p">,</span> <span class="n">municipality_year</span><span class="o">.</span><span class="n">duplicated</span><span class="p">([</span><span class="s2">"MunicipalityCode"</span><span class="p">,</span> <span class="s2">"Year"</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 <span class="n">display</span><span class="p">(</span><span class="n">validation</span><span class="p">)</span>
@@ -8080,6 +8120,9 @@ Decile rows: 37,620
 <span class="n">display</span><span class="p">(</span><span class="n">latest_life_missing</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Source-level negative S80/S20 caveat"</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">negative_s80s20</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Latest-year housing rows: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">latest_housing</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Zero housing denominators: </span><span class="si">{</span><span class="n">zero_housing_denominators</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OwnerShare + TenantShare range: </span><span class="si">{</span><span class="n">housing_share_sum</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">housing_share_sum</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8178,6 +8221,20 @@ Decile rows: 37,620
 <td>LifeExpectancy</td>
 <td>74.600000</td>
 <td>83.800000</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td>OwnerShare</td>
+<td>0.379054</td>
+<td>80.791071</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>TenantShare</td>
+<td>19.208929</td>
+<td>99.620946</td>
 <td>0</td>
 </tr>
 </tbody>
@@ -8290,6 +8347,15 @@ Decile rows: 37,620
 </div>
 </div>
 </div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Latest-year housing rows: 98
+Zero housing denominators: 0
+OwnerShare + TenantShare range: 100.000000 to 100.000000
+</pre>
+</div>
+</div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f51f6e74">
@@ -8307,12 +8373,20 @@ Decile rows: 37,620
 <span class="n">rank_year</span> <span class="o">=</span> <span class="n">summary_stats</span><span class="p">[</span><span class="s2">"latest_rank_summary"</span><span class="p">][</span><span class="s2">"year"</span><span class="p">]</span>
 <span class="n">top_gini</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary_stats</span><span class="p">[</span><span class="s2">"latest_rank_summary"</span><span class="p">][</span><span class="s2">"top_gini"</span><span class="p">])</span>
 <span class="n">top_poverty</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary_stats</span><span class="p">[</span><span class="s2">"latest_rank_summary"</span><span class="p">][</span><span class="s2">"top_poverty60"</span><span class="p">])</span>
+<span class="n">housing</span> <span class="o">=</span> <span class="n">summary_stats</span><span class="p">[</span><span class="s2">"housing_summary"</span><span class="p">]</span>
+<span class="n">low_owner</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s2">"lowest_owner_share"</span><span class="p">])</span>
+<span class="n">high_owner</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s2">"highest_owner_share"</span><span class="p">])</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Latest ranked comparison year: </span><span class="si">{</span><span class="n">rank_year</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Highest-Gini municipalities"</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">top_gini</span><span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"Gini"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Highest-poverty municipalities"</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">top_poverty</span><span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"Gini"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Housing summary year: </span><span class="si">{</span><span class="n">housing</span><span class="p">[</span><span class="s1">'year'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Lowest owner-share municipalities"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">low_owner</span><span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"OwnerShare"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"TenantShare"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Gini"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Highest owner-share municipalities"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">high_owner</span><span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"OwnerShare"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"TenantShare"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Gini"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}))</span>
 </pre></div>
 </div>
 </div>
@@ -8636,6 +8710,235 @@ Highest-Gini municipalities
 </div>
 </div>
 </div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Housing summary year: 2024
+Lowest owner-share municipalities
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Municipality</th>
+<th>OwnerShare</th>
+<th>TenantShare</th>
+<th>Poverty60</th>
+<th>UnemploymentRate</th>
+<th>Gini</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>Copenhagen</td>
+<td>19.3</td>
+<td>80.7</td>
+<td>20.6</td>
+<td>3.58</td>
+<td>34.97</td>
+</tr>
+<tr>
+<th>1</th>
+<td>Frederiksberg</td>
+<td>22.7</td>
+<td>77.3</td>
+<td>14.9</td>
+<td>3.20</td>
+<td>36.54</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Brøndby</td>
+<td>26.9</td>
+<td>73.1</td>
+<td>17.4</td>
+<td>3.78</td>
+<td>26.16</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Herlev</td>
+<td>31.4</td>
+<td>68.6</td>
+<td>11.3</td>
+<td>2.47</td>
+<td>27.15</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Albertslund</td>
+<td>32.5</td>
+<td>67.5</td>
+<td>15.8</td>
+<td>3.26</td>
+<td>24.66</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Ballerup</td>
+<td>33.0</td>
+<td>67.0</td>
+<td>11.1</td>
+<td>2.34</td>
+<td>26.72</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Aarhus</td>
+<td>33.9</td>
+<td>66.1</td>
+<td>20.1</td>
+<td>3.68</td>
+<td>33.43</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Glostrup</td>
+<td>35.6</td>
+<td>64.4</td>
+<td>12.9</td>
+<td>2.86</td>
+<td>26.20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Highest owner-share municipalities
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Municipality</th>
+<th>OwnerShare</th>
+<th>TenantShare</th>
+<th>Poverty60</th>
+<th>UnemploymentRate</th>
+<th>Gini</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>Lejre</td>
+<td>75.9</td>
+<td>24.1</td>
+<td>7.4</td>
+<td>2.08</td>
+<td>25.36</td>
+</tr>
+<tr>
+<th>1</th>
+<td>Læsø</td>
+<td>74.1</td>
+<td>25.9</td>
+<td>14.3</td>
+<td>4.72</td>
+<td>25.41</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Dragør</td>
+<td>72.6</td>
+<td>27.4</td>
+<td>5.7</td>
+<td>1.69</td>
+<td>28.86</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Gribskov</td>
+<td>72.2</td>
+<td>27.8</td>
+<td>9.6</td>
+<td>1.96</td>
+<td>27.68</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Egedal</td>
+<td>71.8</td>
+<td>28.2</td>
+<td>6.1</td>
+<td>1.75</td>
+<td>23.85</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Allerød</td>
+<td>70.3</td>
+<td>29.7</td>
+<td>5.4</td>
+<td>1.51</td>
+<td>27.29</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Rebild</td>
+<td>69.5</td>
+<td>30.5</td>
+<td>7.6</td>
+<td>2.10</td>
+<td>25.87</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Favrskov</td>
+<td>68.6</td>
+<td>31.4</td>
+<td>7.4</td>
+<td>2.27</td>
+<td>24.41</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -8647,7 +8950,8 @@ Highest-Gini municipalities
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="6.-Data-analysis">6. Data analysis<a class="anchor-link" href="#6.-Data-analysis">¶</a></h2><p>We keep the analysis descriptive. We use distribution summaries, Pearson-style correlations, and fitted lines to move from exploration toward explanation without making causal claims.</p>
 <p>In 2024, the clearest relationship is between the 60 percent risk-of-poverty rate and unemployment. The Poverty60-unemployment relationship has <code>R2 = .529</code> across 98 municipalities. The latest Gini-poverty relationship is close to flat at <code>R2 = .002</code>, so we use Gini as an inequality measure and poverty/unemployment as the stronger hardship indicators.</p>
-<p>We also look at why the inequality and poverty lists differ. In 2024, Gini is more closely associated with tertiary education share and life expectancy than with poverty or unemployment. That pattern fits the idea that some high-Gini municipalities are shaped by high-income tails. Poverty60, by contrast, is negatively associated with life expectancy and strongly associated with unemployment, so it is a more direct hardship signal here.</p>
+<p>Housing tenure adds a useful bridge. OwnerShare is negatively associated with Poverty60 (<code>R2 = .304</code>) and unemployment (<code>R2 = .220</code>), while OwnerShare and Gini are only weakly related (<code>R2 = .029</code>). This supports the narrative that renter-heavy municipalities often carry more hardship, but it does not turn tenure into a causal explanation.</p>
+<p>We also look at why the inequality and poverty lists differ. In 2024, Gini is more closely associated with tertiary education share and life expectancy than with poverty or unemployment. That pattern fits the idea that some high-Gini municipalities are shaped by high-income tails. Poverty60, by contrast, is negatively associated with life expectancy, strongly associated with unemployment, and more common in renter-heavy municipalities.</p>
 <p>We repeat the two core cross-sectional relationships year by year. This supports the time dimension of the research question and shows that the project is not relying only on the 2024 endpoint. Readers can see the distributions, ranked lists, points, fitted line, R2 value, and limits of the interpretation directly.</p>
 </div>
 </div>
@@ -8665,11 +8969,16 @@ Highest-Gini municipalities
 
 <span class="n">selected</span> <span class="o">=</span> <span class="n">regression_summary</span><span class="p">[(</span><span class="n">regression_summary</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Poverty60"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">regression_summary</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"UnemploymentRate"</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">weak</span> <span class="o">=</span> <span class="n">regression_summary</span><span class="p">[(</span><span class="n">regression_summary</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Gini"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">regression_summary</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Poverty60"</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">housing_relationships</span> <span class="o">=</span> <span class="n">regression_summary</span><span class="p">[</span><span class="n">regression_summary</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"OwnerShare"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">housing_relationships</span><span class="p">[</span><span class="s2">"relationship"</span><span class="p">]</span> <span class="o">=</span> <span class="n">housing_relationships</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">" vs "</span> <span class="o">+</span> <span class="n">housing_relationships</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span>
 
 <span class="n">why_lookup</span> <span class="o">=</span> <span class="p">{</span>
     <span class="p">(</span><span class="s2">"Gini"</span><span class="p">,</span> <span class="s2">"TertiaryShare"</span><span class="p">):</span> <span class="s2">"High-Gini places also tend to have larger tertiary-educated populations."</span><span class="p">,</span>
     <span class="p">(</span><span class="s2">"Gini"</span><span class="p">,</span> <span class="s2">"LifeExpectancy"</span><span class="p">):</span> <span class="s2">"High-Gini places are not necessarily high-hardship places in this dataset."</span><span class="p">,</span>
     <span class="p">(</span><span class="s2">"Poverty60"</span><span class="p">,</span> <span class="s2">"LifeExpectancy"</span><span class="p">):</span> <span class="s2">"Poverty is more clearly tied to a hardship-related health context."</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">):</span> <span class="s2">"Renter-heavy municipalities tend to have higher poverty."</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">):</span> <span class="s2">"Renter-heavy municipalities also tend to have higher unemployment."</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="s2">"Gini"</span><span class="p">):</span> <span class="s2">"Housing tenure is much less aligned with Gini than with hardship."</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">why_rows</span> <span class="o">=</span> <span class="n">regression_summary</span><span class="p">[</span>
     <span class="n">regression_summary</span><span class="p">[[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">why_lookup</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -8682,6 +8991,8 @@ Highest-Gini municipalities
     <span class="n">why_rows</span><span class="p">[[</span><span class="s2">"Year"</span><span class="p">,</span> <span class="s2">"relationship"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="s2">"r2"</span><span class="p">,</span> <span class="s2">"p_value"</span><span class="p">,</span> <span class="s2">"interpretation"</span><span class="p">]]</span>
     <span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"r"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"r2"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"p_value"</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
 <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Housing tenure relationships"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">housing_relationships</span><span class="p">[[</span><span class="s2">"Year"</span><span class="p">,</span> <span class="s2">"relationship"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"slope"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="s2">"r2"</span><span class="p">,</span> <span class="s2">"p_value"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"slope"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"r2"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"p_value"</span><span class="p">:</span> <span class="mi">4</span><span class="p">}))</span>
 
 <span class="n">latest</span> <span class="o">=</span> <span class="n">municipal</span><span class="p">[</span><span class="n">municipal</span><span class="p">[</span><span class="s2">"Year"</span><span class="p">]</span> <span class="o">==</span> <span class="n">summary_stats</span><span class="p">[</span><span class="s2">"latest_rank_summary"</span><span class="p">][</span><span class="s2">"year"</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">robustness_pairs</span> <span class="o">=</span> <span class="p">[</span>
@@ -8689,6 +9000,9 @@ Highest-Gini municipalities
     <span class="p">(</span><span class="s2">"P90P10"</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"S80S20"</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"Gini"</span><span class="p">,</span> <span class="s2">"Poverty50"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="s2">"Poverty60"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"OwnerShare"</span><span class="p">,</span> <span class="s2">"Gini"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"Poverty50"</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"Poverty60"</span><span class="p">,</span> <span class="s2">"UnemploymentRate"</span><span class="p">),</span>
 <span class="p">]</span>
@@ -8834,6 +9148,42 @@ Highest-Gini municipalities
 <td>0.217</td>
 <td>0.0000</td>
 </tr>
+<tr>
+<th>6</th>
+<td>2024</td>
+<td>OwnerShare</td>
+<td>Poverty60</td>
+<td>98</td>
+<td>-0.148</td>
+<td>19.878</td>
+<td>-0.551</td>
+<td>0.304</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<th>7</th>
+<td>2024</td>
+<td>OwnerShare</td>
+<td>UnemploymentRate</td>
+<td>98</td>
+<td>-0.025</td>
+<td>4.008</td>
+<td>-0.469</td>
+<td>0.220</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<th>8</th>
+<td>2024</td>
+<td>OwnerShare</td>
+<td>Gini</td>
+<td>98</td>
+<td>-0.067</td>
+<td>31.332</td>
+<td>-0.169</td>
+<td>0.029</td>
+<td>0.0965</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -8884,7 +9234,7 @@ Highest-Gini municipalities
 <td>94</td>
 <td>-0.627</td>
 <td>0.393</td>
-<td>0.0</td>
+<td>0.0000</td>
 <td>Poverty is more clearly tied to a hardship-related health context.</td>
 </tr>
 <tr>
@@ -8894,7 +9244,7 @@ Highest-Gini municipalities
 <td>98</td>
 <td>0.587</td>
 <td>0.345</td>
-<td>0.0</td>
+<td>0.0000</td>
 <td>High-Gini places also tend to have larger tertiary-educated populations.</td>
 </tr>
 <tr>
@@ -8904,8 +9254,111 @@ Highest-Gini municipalities
 <td>94</td>
 <td>0.466</td>
 <td>0.217</td>
-<td>0.0</td>
+<td>0.0000</td>
 <td>High-Gini places are not necessarily high-hardship places in this dataset.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>2024</td>
+<td>OwnerShare vs Poverty60</td>
+<td>98</td>
+<td>-0.551</td>
+<td>0.304</td>
+<td>0.0000</td>
+<td>Renter-heavy municipalities tend to have higher poverty.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>2024</td>
+<td>OwnerShare vs UnemploymentRate</td>
+<td>98</td>
+<td>-0.469</td>
+<td>0.220</td>
+<td>0.0000</td>
+<td>Renter-heavy municipalities also tend to have higher unemployment.</td>
+</tr>
+<tr>
+<th>8</th>
+<td>2024</td>
+<td>OwnerShare vs Gini</td>
+<td>98</td>
+<td>-0.169</td>
+<td>0.029</td>
+<td>0.0965</td>
+<td>Housing tenure is much less aligned with Gini than with hardship.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Housing tenure relationships
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Year</th>
+<th>relationship</th>
+<th>n</th>
+<th>slope</th>
+<th>r</th>
+<th>r2</th>
+<th>p_value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>6</th>
+<td>2024</td>
+<td>OwnerShare vs Poverty60</td>
+<td>98</td>
+<td>-0.148</td>
+<td>-0.551</td>
+<td>0.304</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<th>7</th>
+<td>2024</td>
+<td>OwnerShare vs UnemploymentRate</td>
+<td>98</td>
+<td>-0.025</td>
+<td>-0.469</td>
+<td>0.220</td>
+<td>0.0000</td>
+</tr>
+<tr>
+<th>8</th>
+<td>2024</td>
+<td>OwnerShare vs Gini</td>
+<td>98</td>
+<td>-0.067</td>
+<td>-0.169</td>
+<td>0.029</td>
+<td>0.0965</td>
 </tr>
 </tbody>
 </table>
@@ -8984,6 +9437,30 @@ Latest-year robustness checks
 </tr>
 <tr>
 <th>4</th>
+<td>OwnerShare</td>
+<td>Poverty60</td>
+<td>98</td>
+<td>-0.551</td>
+<td>0.304</td>
+</tr>
+<tr>
+<th>5</th>
+<td>OwnerShare</td>
+<td>UnemploymentRate</td>
+<td>98</td>
+<td>-0.469</td>
+<td>0.220</td>
+</tr>
+<tr>
+<th>6</th>
+<td>OwnerShare</td>
+<td>Gini</td>
+<td>98</td>
+<td>-0.169</td>
+<td>0.029</td>
+</tr>
+<tr>
+<th>7</th>
 <td>Poverty50</td>
 <td>UnemploymentRate</td>
 <td>98</td>
@@ -8991,7 +9468,7 @@ Latest-year robustness checks
 <td>0.415</td>
 </tr>
 <tr>
-<th>5</th>
+<th>8</th>
 <td>Poverty60</td>
 <td>UnemploymentRate</td>
 <td>98</td>
@@ -9095,12 +9572,13 @@ Latest-year robustness checks
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="7.-Visualizations">7. Visualizations<a class="anchor-link" href="#7.-Visualizations">¶</a></h2><p>We use six focused charts to create a short data story with both static and interactive views.</p>
+<h2 id="7.-Visualizations">7. Visualizations<a class="anchor-link" href="#7.-Visualizations">¶</a></h2><p>We use seven focused charts to create a short data story with both static and interactive views.</p>
 <ol>
 <li><strong>National trend</strong>: a static matplotlib figure gives the long-run context and avoids overwhelming the first view with municipal detail.</li>
 <li><strong>Municipal distribution</strong>: a static box-and-jitter figure shows spread, tails, and benchmark-year movement across municipalities. This is better than another line chart because the claim depends on distributional shape, not only averages.</li>
 <li><strong>Municipal inequality map</strong>: an interactive Plotly choropleth shows geography and allows hover inspection. The map is not treated as the main proof because color maps are weaker for precise ranking.</li>
 <li><strong>Inequality-poverty ranked comparison</strong>: an interactive Plotly view makes the central contrast precise by putting high-Gini and high-poverty municipalities side by side.</li>
+<li><strong>Housing-tenure bridge</strong>: an interactive two-part Plotly view shows owner-share geography and the OwnerShare-Poverty60 relationship, colored by unemployment.</li>
 <li><strong>Poverty-unemployment scatter</strong>: an interactive Plotly scatterplot with a fitted line shows the 2024 poverty-unemployment relationship and lets readers inspect named municipalities.</li>
 <li><strong>Over-time robustness</strong>: a static R2 line chart checks whether the central contrast also appears outside 2024.</li>
 </ol>
@@ -9212,12 +9690,38 @@ Latest-year robustness checks
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b9f2174c">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b3f2effe">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s2">"../visualizations/dk_housing_tenure_bridge.html"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">760</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<iframe allowfullscreen="" frameborder="0" height="760" src="../visualizations/dk_housing_tenure_bridge.html" width="100%"></iframe>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b9f2174c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s2">"../visualizations/dk_poverty_unemployment_scatter.html"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">650</span><span class="p">))</span>
@@ -9243,7 +9747,7 @@ Latest-year robustness checks
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s1">'&lt;img src="../images/dk_correlation_robustness.png" alt="Over-time R squared robustness chart" style="max-width: 100%; height: auto;"&gt;'</span><span class="p">))</span>
@@ -9255,6 +9759,7 @@ Latest-year robustness checks
         <span class="n">IMAGES_DIR</span> <span class="o">/</span> <span class="s2">"dk_correlation_robustness.png"</span><span class="p">,</span>
         <span class="n">VIS_DIR</span> <span class="o">/</span> <span class="s2">"dk_inequality_map.html"</span><span class="p">,</span>
         <span class="n">VIS_DIR</span> <span class="o">/</span> <span class="s2">"dk_inequality_poverty_rank.html"</span><span class="p">,</span>
+        <span class="n">VIS_DIR</span> <span class="o">/</span> <span class="s2">"dk_housing_tenure_bridge.html"</span><span class="p">,</span>
         <span class="n">VIS_DIR</span> <span class="o">/</span> <span class="s2">"dk_poverty_unemployment_scatter.html"</span><span class="p">,</span>
     <span class="p">]</span>
 <span class="p">})</span>
@@ -9326,7 +9831,7 @@ Latest-year robustness checks
 <th>3</th>
 <td>visualizations/dk_inequality_map.html</td>
 <td>True</td>
-<td>0.14</td>
+<td>0.36</td>
 </tr>
 <tr>
 <th>4</th>
@@ -9336,6 +9841,12 @@ Latest-year robustness checks
 </tr>
 <tr>
 <th>5</th>
+<td>visualizations/dk_housing_tenure_bridge.html</td>
+<td>True</td>
+<td>0.15</td>
+</tr>
+<tr>
+<th>6</th>
 <td>visualizations/dk_poverty_unemployment_scatter.html</td>
 <td>True</td>
 <td>0.02</td>
@@ -9354,17 +9865,17 @@ Latest-year robustness checks
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="8.-Genre">8. Genre<a class="anchor-link" href="#8.-Genre">¶</a></h2><p>We use the <strong>magazine-style narrative visualization</strong> genre from Segel and Heer (2010). This fits the project because we have a specific argument to walk through: national inequality rose, municipal distributions shifted, geography matters, and Gini alone does not capture local hardship.</p>
+<h2 id="8.-Genre">8. Genre<a class="anchor-link" href="#8.-Genre">¶</a></h2><p>We use the <strong>magazine-style narrative visualization</strong> genre from Segel and Heer (2010). This fits the project because we have a specific argument to walk through: national inequality rose, municipal distributions shifted, geography matters, housing tenure helps explain local hardship patterns, and Gini alone does not capture hardship.</p>
 <p>Using Segel and Heer's Figure 7 vocabulary, the visual narrative choices are:</p>
 <ul>
 <li><strong>Visual structuring</strong>: one linear page, repeated figure/caption rhythm, and consistent typography/color across the static and interactive charts.</li>
-<li><strong>Highlighting</strong>: the headline states the main contrast, the distribution plot makes spread visible, the ranked comparison names the contrast, the scatterplot shows how poverty and unemployment move together, and the robustness figure checks the endpoint choice.</li>
-<li><strong>Transition guidance</strong>: section headings and captions move the reader from national trend to distribution, geography, precise ranking, poverty-unemployment association, and over-time check.</li>
+<li><strong>Highlighting</strong>: the headline states the main contrast, the distribution plot makes spread visible, the ranked comparison names the contrast, the housing bridge explains where hardship concentrates, the scatterplot shows how poverty and unemployment move together, and the robustness figure checks the endpoint choice.</li>
+<li><strong>Transition guidance</strong>: section headings and captions move the reader from national trend to distribution, geography, precise ranking, housing tenure, poverty-unemployment association, and over-time check.</li>
 </ul>
 <p>The narrative-structure choices are:</p>
 <ul>
 <li><strong>Ordering</strong>: a linear magazine sequence, not a dashboard.</li>
-<li><strong>Interactivity</strong>: hover labels in the map, ranking, and scatterplot, while keeping the argument fixed.</li>
+<li><strong>Interactivity</strong>: hover labels in the map, ranking, housing, and scatterplot, while keeping the argument fixed.</li>
 <li><strong>Messaging</strong>: headline, deck, glossary, figure captions, takeaways, limits, and APA-style references make the claim and caveats explicit.</li>
 </ul>
 </div>
@@ -9377,9 +9888,9 @@ Latest-year robustness checks
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="9.-Discussion">9. Discussion<a class="anchor-link" href="#9.-Discussion">¶</a></h2><p>The main strength is the data base. It is official, reproducible, and local enough for municipal comparison. The six-chart structure gives enough evidence for the main claim without turning the site into a dashboard. The distribution figure examines shape and spread, the ranked comparison makes the difference between inequality and hardship concrete, and the over-time R2 figure checks that the conclusion is not only about the endpoint year.</p>
-<p>The added explanation helps make sense of the split between the lists. We still do not claim that education, life expectancy, poverty, or unemployment causes municipal inequality. Instead, we show that some high-Gini places also have higher education shares and longer life expectancy, while high-poverty places often face more unemployment. That helps explain why Gentofte or Rudersdal should not be read the same way as Lolland or Ishøj, even though all are important to the story.</p>
-<p>The limits are important. We cannot identify causal effects, separate household wealth from income, or measure housing costs and consumption. Life expectancy is measured over rolling periods and is noisier in small municipalities. The latest merged panel ends in 2024 even though some raw sources have 2025 observations. A future version could add population weighting, housing-market indicators, and a formal panel model, but those additions would answer a more causal question than this course project is meant to answer.</p>
+<h2 id="9.-Discussion">9. Discussion<a class="anchor-link" href="#9.-Discussion">¶</a></h2><p>The main strength is the data base. It is official, reproducible, and local enough for municipal comparison. The seven-chart structure gives enough evidence for the main claim without turning the site into a dashboard. The distribution figure examines shape and spread, the ranked comparison makes the difference between inequality and hardship concrete, the housing-tenure bridge gives that difference local structure, and the over-time R2 figure checks that the conclusion is not only about the endpoint year.</p>
+<p>The added housing explanation helps make sense of the split between the lists. We still do not claim that education, life expectancy, poverty, unemployment, or housing tenure causes municipal inequality. Instead, we show that some high-Gini places also have higher education shares and longer life expectancy, while high-poverty places often face more unemployment and have lower owner-occupancy. That helps explain why Gentofte or Rudersdal should not be read the same way as Lolland, Ishoj, Copenhagen, or Aarhus, even though all are important to the story.</p>
+<p>The limits are important. We cannot identify causal effects, separate household wealth from income, or measure housing costs and consumption. BOL101 gives tenure, not rent burden or local housing prices, and 2021-2022 are closed in the source because of BBR data errors. Life expectancy is measured over rolling periods and is noisier in small municipalities. The latest merged income panel ends in 2024 even though housing has 2026 observations; we do not carry those newer housing values backward. A future version could add population weighting, housing-cost indicators, and a formal panel model, but those additions would answer a more causal question than this course project is meant to answer.</p>
 </div>
 </div>
 </div>
@@ -9405,6 +9916,7 @@ Latest-year robustness checks
 <li>Dataforsyningen. (n.d.). <em>Kommuner</em> [GeoJSON data set]. Retrieved May 12, 2026, from <a href="https://api.dataforsyningen.dk/kommuner?format=geojson">https://api.dataforsyningen.dk/kommuner?format=geojson</a></li>
 <li>Segel, E., &amp; Heer, J. (2010). Narrative visualization: Telling stories with data. <em>IEEE Transactions on Visualization and Computer Graphics, 16</em>(6), 1139-1148. <a href="https://doi.org/10.1109/TVCG.2010.179">https://doi.org/10.1109/TVCG.2010.179</a></li>
 <li>Statistics Denmark. (n.d.). <em>Average equivalised disposable income by decile (IFOR32)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/IFOR32">https://www.statbank.dk/IFOR32</a></li>
+<li>Statistics Denmark. (n.d.). <em>Dwellings (BOL101)</em> [Data set]. StatBank Denmark. Retrieved May 13, 2026, from <a href="https://www.statbank.dk/BOL101">https://www.statbank.dk/BOL101</a></li>
 <li>Statistics Denmark. (n.d.). <em>Educational attainment (HFUDD11)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HFUDD11">https://www.statbank.dk/HFUDD11</a></li>
 <li>Statistics Denmark. (n.d.). <em>Income distribution on equivalised disposable income (IFOR41)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/IFOR41">https://www.statbank.dk/IFOR41</a></li>
 <li>Statistics Denmark. (n.d.). <em>Life expectancy for newborn babies (HISBK)</em> [Data set]. StatBank Denmark. Retrieved May 12, 2026, from <a href="https://www.statbank.dk/HISBK">https://www.statbank.dk/HISBK</a></li>
