@@ -128,10 +128,16 @@
       height: auto;
     }
 
+    .trend-frame,
+    .robustness-frame {
+      height: 560px;
+    }
+
     .map-frame {
       height: 940px;
     }
 
+    .distribution-frame,
     .rank-frame,
     .scatter-frame {
       height: 660px;
@@ -272,10 +278,16 @@
         white-space: nowrap;
       }
 
+      .trend-frame,
+      .robustness-frame {
+        height: 520px;
+      }
+
       .map-frame {
         height: 820px;
       }
 
+      .distribution-frame,
       .rank-frame,
       .scatter-frame {
         height: 620px;
@@ -314,20 +326,20 @@
       <h2>National inequality has risen</h2>
       <p>The story starts nationally. Gini, P90/P10, and the 60 percent risk-of-poverty rate are indexed to their first available observations, so indicators with different units can be read on one scale.</p>
       <p>The increase is not just visible in the national lines. In the municipal panel behind the site, the median municipal Gini rises from 20.88 in 1987 to 26.40 in 2024, while the median Poverty60 rate rises from 8.50 in 2000 to 11.35 in 2024. In other words, the national rise is mirrored by a higher and broader local distribution, not only by a few outlier municipalities.</p>
-      <figure class="figure">
-        <img src="images/dk_inequality_trend.png" alt="Indexed trend chart for Denmark inequality and poverty measures">
-        <figcaption class="caption">Figure 1. National inequality and poverty measures, indexed to first available observation. Gini and P90/P10 begin in 1987; the poverty series begins in 2000. Source: Statistics Denmark StatBank tables IFOR41 and IFOR12P.</figcaption>
-      </figure>
+      <div class="figure">
+        <iframe class="trend-frame" src="visualizations/dk_inequality_trend.html" title="National inequality and poverty trend" loading="lazy"></iframe>
+        <p class="caption">Figure 1. National inequality and poverty measures, indexed to first available observation. Gini and P90/P10 begin in 1987; the poverty series begins in 2000. Hover shows exact indexed and original values. Source: Statistics Denmark StatBank tables IFOR41 and IFOR12P.</p>
+      </div>
     </section>
 
     <section>
       <h2>The municipal distribution moved too</h2>
       <p>A national line hides whether change is broad-based or concentrated in a few places. The distribution view shows every municipality at benchmark years, with the box marking the middle half of municipalities.</p>
       <p>Municipal Gini values shift upward over the period, while poverty also remains uneven across places.</p>
-      <figure class="figure">
-        <img src="images/dk_municipal_distribution.png" alt="Box and jitter plots of municipal Gini and poverty distributions over benchmark years">
-        <figcaption class="caption">Figure 2. Municipal distributions for Gini and Poverty60 at benchmark years. Points are municipalities; boxes summarize the middle half of each municipal distribution. Source: Statistics Denmark StatBank tables IFOR41 and IFOR12P.</figcaption>
-      </figure>
+      <div class="figure">
+        <iframe class="distribution-frame" src="visualizations/dk_municipal_distribution.html" title="Municipal Gini and poverty distributions" loading="lazy"></iframe>
+        <p class="caption">Figure 2. Municipal distributions for Gini and Poverty60 at benchmark years. Points are municipalities; boxes summarize the middle half of each municipal distribution, and hover labels name the municipality and rank. Source: Statistics Denmark StatBank tables IFOR41 and IFOR12P.</p>
+      </div>
     </section>
 
     <section>
@@ -386,7 +398,7 @@
       </table>
       <div class="figure">
         <iframe class="rank-frame" src="visualizations/dk_inequality_poverty_rank.html" title="Ranked comparison of inequality and poverty" loading="lazy"></iframe>
-        <p class="caption">Figure 4. Latest-year ranked comparison of municipalities with the highest Gini and highest Poverty60 values. Bar color shows unemployment, adding hardship context without treating it as a causal result. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</p>
+        <p class="caption">Figure 4. Ranked comparison of municipalities with the highest Gini and highest Poverty60 values at benchmark years. Bar color shows unemployment, adding hardship context without treating it as a causal result. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</p>
       </div>
     </section>
 
@@ -396,7 +408,7 @@
       <p>By contrast, the latest municipal Gini-poverty relationship is basically flat, with an R&sup2; close to zero. This is why Gini is useful for inequality but not enough for local hardship.</p>
       <div class="figure">
         <iframe class="scatter-frame" src="visualizations/dk_poverty_unemployment_scatter.html" title="Municipal poverty and unemployment scatterplot" loading="lazy"></iframe>
-        <p class="caption">Figure 5. Each point is a municipality in 2024. The fitted line reports the average cross-sectional relationship in the latest complete year; it should not be interpreted as a causal estimate. Source: Statistics Denmark StatBank tables IFOR12P, AUP02, and IFOR41.</p>
+        <p class="caption">Figure 5. Each point is a municipality in 2024. The fitted line reports the average cross-sectional relationship in the latest complete year; the toggle contrasts poverty-unemployment with the much flatter Gini-poverty relationship. Source: Statistics Denmark StatBank tables IFOR12P, AUP02, and IFOR41.</p>
       </div>
     </section>
 
@@ -404,10 +416,10 @@
       <h2>The contrast is not only about 2024</h2>
       <p>The robustness check repeats the same cross-sectional comparison year by year. The Gini-poverty relationship stays weak across the shared municipal panel, while the poverty-unemployment relationship is consistently stronger in the years where both measures are available.</p>
       <p>This does not prove a causal pathway. It does show that the main contrast is not driven only by the 2024 endpoint.</p>
-      <figure class="figure">
-        <img src="images/dk_correlation_robustness.png" alt="Line chart of municipal relationship R squared values over time">
-        <figcaption class="caption">Figure 6. Year-by-year cross-sectional R&sup2; across Danish municipalities for Gini versus Poverty60 and Poverty60 versus unemployment. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</figcaption>
-      </figure>
+      <div class="figure">
+        <iframe class="robustness-frame" src="visualizations/dk_correlation_robustness.html" title="Year-by-year relationship robustness" loading="lazy"></iframe>
+        <p class="caption">Figure 6. Year-by-year cross-sectional R&sup2; across Danish municipalities for Gini versus Poverty60 and Poverty60 versus unemployment. Hover shows exact R&sup2;, correlation, sample size, and p-value. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</p>
+      </div>
     </section>
 
     <section>

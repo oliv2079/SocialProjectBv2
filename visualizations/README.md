@@ -8,6 +8,9 @@ python scripts/build_project.py
 
 Primary website visualizations:
 
+- `dk_inequality_trend.html`
+- `dk_municipal_distribution.html`
 - `dk_inequality_map.html`
 - `dk_inequality_poverty_rank.html`
 - `dk_poverty_unemployment_scatter.html`
+- `dk_correlation_robustness.html`

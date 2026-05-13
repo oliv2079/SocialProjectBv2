@@ -90,10 +90,11 @@ education population.
 The analysis uses the tools expected in the course: distribution summaries,
 Pearson-style correlations, simple fitted lines, slope, intercept, and `R2`.
 These results are descriptive; we do not draw causal conclusions. The website
-uses six focused visualizations: a national trend, a municipal distribution
-view, an interactive municipal inequality map, an interactive ranked comparison
-of inequality and poverty, an interactive poverty-unemployment scatter, and an
-over-time `R2` robustness figure. The main insight is that municipal inequality
+uses six focused visualizations: an interactive national trend, an interactive
+municipal distribution view, an interactive municipal inequality map, an
+interactive ranked comparison of inequality and poverty, an interactive
+relationship scatter, and an interactive over-time `R2` robustness figure. The
+main insight is that municipal inequality
 and municipal hardship are related, but they often point to different places:
 the latest Gini-poverty cross-section is nearly flat, while poverty-unemployment
 is strong.
@@ -110,10 +111,10 @@ is strong.
   exported.
 - **Week 3-4 statistics**: the analysis uses distributions, Pearson-style
   correlations, simple linear fits, `R2`, and non-causal interpretation.
-- **Week 5-6 visualization**: the site includes a Plotly choropleth map, an
-  interactive ranked comparison, and a separate interactive Plotly scatterplot
-  with hover details and a fitted line. A static robustness figure checks
-  whether the key relationships persist over time.
+- **Week 5-6 visualization**: the site includes Plotly versions of the trend,
+  distribution, choropleth map, ranked comparison, relationship scatterplot, and
+  robustness check, with controls kept limited to the figures where they support
+  the narrative.
 - **Week 7-8 website/story**: the website follows the Segel and Heer magazine
   genre, uses a guided six-visual sequence, includes captions, and targets a
   general reader rather than a technical audience.
