@@ -296,7 +296,7 @@
     <div class="wrap hero">
       <p class="eyebrow">Denmark inequality project</p>
       <h1>Municipal inequality is not the same as municipal hardship</h1>
-      <p class="deck">We look at Danish municipalities to show how inequality has risen nationally, how the local distribution has widened, and why housing tenure helps explain why the highest-inequality places are not always the places with the most poverty and unemployment.</p>
+      <p class="deck">We look at Danish municipalities to show how income inequality has risen nationally and how the local distribution has widened. We then explain why the highest-inequality places are not always the places with the most poverty and unemployment, and how housing tenure helps clarify that contrast.</p>
       <div class="meta-links" aria-label="Project links">
         <a href="notebooks/denmark_inequality_project.html">Explainer notebook</a>
         <a href="data/processed/municipality_year.csv">Processed data</a>
@@ -307,21 +307,22 @@
   <main class="wrap">
     <section>
       <h2>The question</h2>
-      <p>We ask how unequal Danish municipalities are, how that has changed over time, and whether inequality points to the same places as poverty and unemployment. The pattern is more nuanced than one map or national trend line can show. Inequality and hardship overlap in some municipalities, but they often do not.</p>
+      <p><strong>Research question:</strong> How unequal are Danish municipalities, how has that changed over time, and do municipalities with the strongest poverty and unemployment rates coincide with those having the highest income inequality?</p>
+      <p>The pattern is more nuanced than one map or national trend line can show. Inequality and hardship overlap in some municipalities, but they often do not.</p>
       <p>The data comes from official Statistics Denmark StatBank tables for inequality, decile incomes, poverty, unemployment, education, life expectancy, and housing tenure.</p>
       <p>We use a municipality-year panel covering 98 Danish municipalities plus a national benchmark. The shared income panel runs from 1987 to 2024, the poverty series begins in 2000, and monthly unemployment is averaged into annual municipal rates. Housing tenure is matched only by the same municipality-year, so newer 2026 housing observations are not carried back into the 2024 income panel. Municipal tenure comes from BOL101; BOLRD is used only as a national owner/tenant cross-check because it has tenure and time but no municipality dimension. These are descriptive results; we do not draw causal conclusions.</p>
       <div class="glossary" aria-label="Plain-language glossary">
-        <p class="term"><strong>Gini</strong>A 0 to 100 income-inequality measure based on equivalized disposable income. Higher values mean incomes are more spread out.</p>
-        <p class="term"><strong>P90/P10</strong>The income near the top of the distribution divided by income near the bottom, using the 90th and 10th percentiles.</p>
-        <p class="term"><strong>Poverty60</strong>The share of people in families below 60 percent of the national median income in the StatBank risk-of-poverty table.</p>
-        <p class="term"><strong>Unemployment</strong>The unemployed share of the labor force, averaged across monthly municipal observations.</p>
-        <p class="term"><strong>OwnerShare</strong>The share of owner-occupied dwellings among dwellings with a known owner or tenant tenure status.</p>
+        <p class="term"><strong>Gini:</strong> A 0 to 100 income-inequality measure based on equivalized disposable income. Higher values mean incomes are more spread out.</p>
+        <p class="term"><strong>P90/P10:</strong> The income near the top of the distribution divided by income near the bottom, using the 90th and 10th percentiles.</p>
+        <p class="term"><strong>Poverty60:</strong> The share of people in families below 60 percent of the national median income in the StatBank risk-of-poverty table.</p>
+        <p class="term"><strong>Unemployment:</strong> The unemployed share of the labor force, averaged across monthly municipal observations.</p>
+        <p class="term"><strong>OwnerShare:</strong> The share of owner-occupied dwellings among dwellings with a known owner or tenant tenure status.</p>
       </div>
     </section>
 
     <section>
       <h2>National inequality has risen</h2>
-      <p>The story starts nationally. Gini, P90/P10, and the 60 percent risk-of-poverty rate are indexed to their first available observations, so indicators with different units can be read on one scale.</p>
+      <p>Figure 1 starts nationally. Gini, P90/P10, and the 60 percent risk-of-poverty rate are indexed to their first available observations, so indicators with different units can be read on one scale.</p>
       <p>The increase is not just visible in the national lines. In the municipal panel behind the site, the median municipal Gini rises from 20.88 in 1987 to 26.40 in 2024, while the median Poverty60 rate rises from 8.50 in 2000 to 11.35 in 2024. In other words, the national rise is mirrored by a higher and broader local distribution, not only by a few outlier municipalities.</p>
       <figure class="figure">
         <img src="images/dk_inequality_trend.png" alt="Indexed trend chart for Denmark inequality and poverty measures">
@@ -331,8 +332,8 @@
 
     <section>
       <h2>The municipal distribution moved too</h2>
-      <p>A national line hides whether change is broad-based or concentrated in a few places. The distribution view shows every municipality at benchmark years, with the box marking the middle half of municipalities.</p>
-      <p>Municipal Gini values shift upward over the period, while poverty also remains uneven across places.</p>
+      <p>A national line hides whether change is broad-based or concentrated in a few places. Figure 2 shows every municipality at benchmark years, with the box marking the middle half of municipalities.</p>
+      <p>Municipal Gini values shift upward over the period, while poverty also remains uneven across places. This means rising inequality was widespread, not just the result of a few outlier municipalities.</p>
       <figure class="figure">
         <img src="images/dk_municipal_distribution.png" alt="Box and jitter plots of municipal Gini and poverty distributions over benchmark years">
         <figcaption class="caption">Figure 2. Municipal distributions for Gini and Poverty60 at benchmark years. Points are municipalities; boxes summarize the middle half of each municipal distribution. Source: Statistics Denmark StatBank tables IFOR41 and IFOR12P.</figcaption>
@@ -341,16 +342,16 @@
 
     <section>
       <h2>Inequality is geographical</h2>
-      <p>The map shifts from distribution to place. It shows how municipal Gini values vary across geography and time, with the slider available for earlier years. Geography matters, but the map cannot carry the argument by itself because maps are better at showing location than exact ranking.</p>
+      <p>Figure 3 shifts from distribution to place. It shows how municipal Gini values vary across geography and time, with the slider available for earlier years. Geography matters, but the map cannot carry the argument by itself because maps are better at showing location than exact ranking.</p>
       <div class="figure">
         <iframe class="map-frame" src="visualizations/dk_inequality_map.html" title="Municipal inequality map" loading="lazy"></iframe>
-        <p class="caption">Figure 3. Plotly choropleth of municipal income inequality from 1987 to 2024, opening on 2024. Source: Dataforsyningen municipality boundaries and Statistics Denmark StatBank table IFOR41.</p>
+        <p class="caption">Figure 3. Choropleth map of municipal Gini from 1987 to 2024, opening on 2024. Color indicates income-inequality level; use the slider to explore earlier years. Source: Dataforsyningen municipality boundaries and Statistics Denmark StatBank table IFOR41.</p>
       </div>
     </section>
 
     <section>
       <h2>The high-inequality list is not the high-poverty list</h2>
-      <p>The ranked comparison makes the key contrast explicit. Some municipalities with very high Gini have relatively low poverty and unemployment, while several high-poverty municipalities sit closer to the middle of the Gini distribution.</p>
+      <p>Figure 4 makes the key contrast explicit. Some municipalities with very high Gini have relatively low poverty and unemployment, while several high-poverty municipalities sit closer to the middle of the Gini distribution.</p>
       <p>The contrast is clearest in the 2024 rankings. Gentofte (Gini 49.04, Poverty60 9.6%, unemployment 2.33%) and Rudersdal (47.31, 7.6%, 1.97%) sit at the top of the inequality list, while Copenhagen and Aarhus combine high poverty with lower Gini values, and municipalities such as Lolland and Ish&oslash;j show substantial hardship without extreme inequality. The notebook's latest-year checks point in the same direction: Gini and Poverty60 are nearly unrelated across municipalities (R&sup2; = 0.002), while Poverty60 and unemployment move together strongly (R&sup2; = 0.529).</p>
       <table class="example-table" aria-label="Municipality examples showing inequality and hardship roles">
         <thead>
@@ -395,46 +396,46 @@
       </table>
       <div class="figure">
         <iframe class="rank-frame" src="visualizations/dk_inequality_poverty_rank.html" title="Ranked comparison of inequality and poverty" loading="lazy"></iframe>
-        <p class="caption">Figure 4. Latest-year ranked comparison of municipalities with the highest Gini and highest Poverty60 values. Bar color shows unemployment, adding hardship context without treating it as a causal result. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</p>
+        <p class="caption">Figure 4. Rank-ordered comparison of the municipalities with the highest Gini and highest Poverty60 values in 2024. Bar color shows unemployment, showing that many high-Gini places are not high on the poverty list. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</p>
       </div>
     </section>
 
     <section>
       <h2>Housing gives the split a structure</h2>
       <p>Housing tenure helps connect the ranked contrast to a material local structure. In 2024, owner-occupied dwellings make up only 19.3 percent of known-tenure dwellings in Copenhagen and 22.7 percent in Frederiksberg, while the median municipality is 58.1 percent owner-occupied and Lejre reaches 75.9 percent.</p>
-      <p>The relationship is meaningful but not complete. Across municipalities, OwnerShare is negatively associated with Poverty60 (R&sup2; = 0.304) and unemployment (R&sup2; = 0.220), while the OwnerShare-Gini relationship is much weaker (R&sup2; = 0.029). That fits the red thread: tenure helps explain where hardship concentrates, but Gini still captures a different distributional shape.</p>
+      <p>Figure 5 plots owner share against hardship. The relationship is meaningful but not complete. Across municipalities, OwnerShare is negatively associated with Poverty60 (R&sup2; = 0.304) and unemployment (R&sup2; = 0.220), while the OwnerShare-Gini relationship is much weaker (R&sup2; = 0.029). That fits the red thread: tenure helps explain where hardship concentrates, but Gini still captures a different distributional shape.</p>
       <div class="figure">
         <iframe class="housing-frame" src="visualizations/dk_housing_tenure_bridge.html" title="Housing tenure and hardship bridge visualization" loading="lazy"></iframe>
-        <p class="caption">Figure 5. Owner-occupied dwelling share by municipality and its relationship to Poverty60 in 2024. The scatter colors points by unemployment and includes a fitted line for the descriptive cross-sectional relationship. Source: Statistics Denmark StatBank tables BOL101, IFOR12P, AUP02, and IFOR41.</p>
+        <p class="caption">Figure 5. Owner-occupied dwelling share versus Poverty60 in 2024. Points are municipalities; color shows unemployment, and the fitted line shows that higher homeownership is associated with lower hardship. Source: Statistics Denmark StatBank tables BOL101, IFOR12P, AUP02, and IFOR41.</p>
       </div>
     </section>
 
     <section>
       <h2>Poverty and unemployment move together</h2>
-      <p>The next chart shows the clearest latest-year hardship relationship. Municipalities with higher risk-of-poverty rates also tend to have higher unemployment. In 2024, the fitted line explains about 53 percent of the cross-municipality variation in unemployment.</p>
+      <p>Figure 6 shows the clearest latest-year hardship relationship. Municipalities with higher risk-of-poverty rates also tend to have higher unemployment. In 2024, the fitted line explains about 53 percent of the cross-municipality variation in unemployment.</p>
       <p>By contrast, the latest municipal Gini-poverty relationship is basically flat, with an R&sup2; close to zero. This is why Gini is useful for inequality but not enough for local hardship.</p>
       <div class="figure">
         <iframe class="scatter-frame" src="visualizations/dk_poverty_unemployment_scatter.html" title="Municipal poverty and unemployment scatterplot" loading="lazy"></iframe>
-        <p class="caption">Figure 6. Each point is a municipality in 2024. The fitted line reports the average cross-sectional relationship in the latest complete year; it should not be interpreted as a causal estimate. Source: Statistics Denmark StatBank tables IFOR12P, AUP02, and IFOR41.</p>
+        <p class="caption">Figure 6. Risk-of-poverty rate versus unemployment rate in 2024. Each point is a municipality; the fitted line shows a strong positive cross-sectional relationship, not a causal estimate. Source: Statistics Denmark StatBank tables IFOR12P, AUP02, and IFOR41.</p>
       </div>
     </section>
 
     <section>
       <h2>The contrast is not only about 2024</h2>
-      <p>The robustness check repeats the same cross-sectional comparison year by year. The Gini-poverty relationship stays weak across the shared municipal panel, while the poverty-unemployment relationship is consistently stronger in the years where both measures are available.</p>
+      <p>Figure 7 repeats the same cross-sectional comparison year by year. The Gini-poverty relationship stays weak across the shared municipal panel, while the poverty-unemployment relationship is consistently stronger in the years where both measures are available.</p>
       <p>This does not prove a causal pathway. It does show that the main contrast is not driven only by the 2024 endpoint.</p>
       <figure class="figure">
         <img src="images/dk_correlation_robustness.png" alt="Line chart of municipal relationship R squared values over time">
-        <figcaption class="caption">Figure 7. Year-by-year cross-sectional R&sup2; across Danish municipalities for Gini versus Poverty60 and Poverty60 versus unemployment. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</figcaption>
+        <figcaption class="caption">Figure 7. Year-by-year municipal cross-sectional R&sup2; values for Gini versus Poverty60 and Poverty60 versus unemployment. Source: Statistics Denmark StatBank tables IFOR41, IFOR12P, and AUP02.</figcaption>
       </figure>
     </section>
 
     <section>
       <h2>What to take from it</h2>
       <div class="takeaways">
-        <p class="takeaway"><strong>Inequality rose, but unevenly.</strong>The national trend is upward, and the municipal distribution shows that local spread matters.</p>
-        <p class="takeaway"><strong>Hardship clusters differently.</strong>High-poverty municipalities are often more renter-heavy, while high Gini places are not automatically high-hardship places.</p>
-        <p class="takeaway"><strong>Housing helps, but descriptively.</strong>Tenure clarifies the split without proving that housing composition causes poverty or unemployment.</p>
+        <p class="takeaway"><strong>Inequality rose, but unevenly.</strong> The national trend is upward, and Figure 2 shows that the municipal distribution shifted higher rather than changing only in a few places.</p>
+        <p class="takeaway"><strong>Hardship clusters differently.</strong> High-poverty municipalities are often more renter-heavy, while high-Gini places are not automatically high-poverty or high-unemployment places.</p>
+        <p class="takeaway"><strong>Housing helps explain the split descriptively.</strong> Tenure clarifies the contrast without proving that housing composition causes poverty or unemployment.</p>
       </div>
     </section>
 

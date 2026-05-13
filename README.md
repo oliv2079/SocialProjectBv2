@@ -123,7 +123,7 @@ composition helps explain where hardship concentrates.
   interactive Plotly scatterplot with hover details and a fitted line. A static
   robustness figure checks whether the key relationships persist over time.
 - **Week 7-8 website/story**: the website follows the Segel and Heer magazine
-  genre, uses a guided six-visual sequence, includes captions, and targets a
+  genre, uses a guided seven-visual sequence, includes captions, and targets a
   general reader rather than a technical audience.
 
 ## Data Caveats
@@ -131,7 +131,7 @@ composition helps explain where hardship concentrates.
 - The main merged panel ends in 2024 because the income inequality and poverty
   source tables end in 2024 in the current local extract.
 - Life expectancy is missing in the 2024 merged panel for four small island
-  municipalities: Ærø, Fanø, Samsø, and Læsø.
+  municipalities: &AElig;r&oslash;, Fan&oslash;, Sams&oslash;, and L&aelig;s&oslash;.
 - StatBank reports one implausible negative S80/S20 value for Rudersdal in
   1994. We flag it and do not base any argument on it.
 - BOL101 housing tenure is available for 2010-2020 and 2023-2026 in the current
