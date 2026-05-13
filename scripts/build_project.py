@@ -14,6 +14,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from scipy import stats
@@ -349,7 +350,7 @@ def latest_rank_summary(panel: pd.DataFrame, top_n: int = 8) -> dict[str, Any]:
     }
 
 
-def plot_trend_static(panel: pd.DataFrame) -> Path:
+def plot_trend(panel: pd.DataFrame) -> Path:
     national = panel[panel["MunicipalityCode"] == "000"].sort_values("Year")
     metrics = ["Gini", "P90P10", "Poverty60"]
     colors = {"Gini": "#1f6f8b", "P90P10": "#8f3f71", "Poverty60": "#c77b30"}
@@ -390,71 +391,6 @@ def plot_trend_static(panel: pd.DataFrame) -> Path:
     return path
 
 
-def plot_trend(panel: pd.DataFrame) -> Path:
-    national = panel[panel["MunicipalityCode"] == "000"].sort_values("Year")
-    metrics = [
-        ("Gini", "Gini", "#1f6f8b"),
-        ("P90P10", "P90/P10", "#8f3f71"),
-        ("Poverty60", "Poverty60", "#c77b30"),
-    ]
-
-    fig = go.Figure()
-    plotted = False
-    for metric, label, color in metrics:
-        series = national[["Year", metric]].dropna()
-        if series.empty:
-            continue
-        base = series[metric].iloc[0]
-        if not np.isfinite(base) or base == 0:
-            continue
-        indexed = series[metric] / base * 100
-        customdata = np.column_stack(
-            [
-                series[metric].round(2),
-                np.repeat(float(base), len(series)),
-            ]
-        )
-        fig.add_trace(
-            go.Scatter(
-                x=series["Year"],
-                y=indexed,
-                mode="lines+markers",
-                name=f"{label} (first available = 100)",
-                line={"color": color, "width": 2.4},
-                marker={"size": 6},
-                customdata=customdata,
-                hovertemplate=(
-                    "<b>%{fullData.name}</b><br>"
-                    "Year: %{x}<br>"
-                    "Index: %{y:.1f}<br>"
-                    "Original value: %{customdata[0]:.2f}<br>"
-                    "Base value: %{customdata[1]:.2f}"
-                    "<extra></extra>"
-                ),
-            )
-        )
-        plotted = True
-
-    if not plotted:
-        raise ValueError("Could not plot trend because national series were empty.")
-
-    fig.add_hline(y=100, line={"color": "#777777", "width": 1})
-    fig.update_layout(
-        title="Denmark inequality and poverty trend",
-        margin={"r": 16, "t": 58, "l": 12, "b": 36},
-        autosize=True,
-        font={"family": "Arial, sans-serif"},
-        hovermode="x unified",
-        legend={"orientation": "h", "y": -0.18},
-        xaxis={"title": "Year"},
-        yaxis={"title": "Index"},
-        plot_bgcolor="#ffffff",
-    )
-    fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.12)")
-    path = VIS_DIR / "dk_inequality_trend.html"
-    return write_plotly_html(fig, path)
-
-
 def plot_deciles(deciles: pd.DataFrame) -> Path:
     national = deciles[deciles["MunicipalityCode"] == "000"].dropna(
         subset=["AvgDisposableIncome", "DecileNumber"]
@@ -481,7 +417,7 @@ def plot_deciles(deciles: pd.DataFrame) -> Path:
     return path
 
 
-def plot_municipal_distribution_static(panel: pd.DataFrame) -> Path:
+def plot_municipal_distribution(panel: pd.DataFrame) -> Path:
     municipal = municipal_rows(panel)
     metrics = [
         ("Gini", "Municipal Gini coefficient"),
@@ -542,81 +478,6 @@ def plot_municipal_distribution_static(panel: pd.DataFrame) -> Path:
     fig.savefig(path, dpi=170, bbox_inches="tight")
     plt.close(fig)
     return path
-
-
-def plot_municipal_distribution(panel: pd.DataFrame) -> Path:
-    municipal = municipal_rows(panel)
-    metrics = [
-        ("Gini", "Municipal Gini coefficient", "#1f6f8b"),
-        ("Poverty60", "Risk-of-poverty rate", "#b65f2a"),
-    ]
-
-    fig = make_subplots(
-        rows=1,
-        cols=2,
-        horizontal_spacing=0.14,
-        subplot_titles=[title for _, title, _ in metrics],
-    )
-
-    for col, (metric, title, color) in enumerate(metrics, start=1):
-        years = benchmark_years_for_metric(panel, metric)
-        plot_data = municipal[
-            municipal["Year"].isin(years) & municipal[metric].notna()
-        ].copy()
-        if plot_data.empty:
-            continue
-        plot_data["YearLabel"] = plot_data["Year"].astype(int).astype(str)
-        plot_data["Rank"] = plot_data.groupby("Year")[metric].rank(
-            method="min", ascending=False
-        )
-        plot_data["Count"] = plot_data.groupby("Year")[metric].transform("count")
-        plot_data = plot_data.sort_values(["Year", metric])
-        customdata = np.column_stack(
-            [
-                plot_data["Municipality"],
-                plot_data["Year"].astype(int),
-                plot_data["Rank"].astype(int),
-                plot_data["Count"].astype(int),
-            ]
-        )
-        fig.add_trace(
-            go.Box(
-                x=plot_data["YearLabel"],
-                y=plot_data[metric],
-                name=title,
-                boxpoints="all",
-                jitter=0.32,
-                pointpos=0,
-                marker={"color": color, "size": 5, "opacity": 0.48},
-                line={"color": color, "width": 1.4},
-                fillcolor="rgba(255,255,255,0.55)",
-                customdata=customdata,
-                hoveron="points",
-                hovertemplate=(
-                    "<b>%{customdata[0]}</b><br>"
-                    "Year: %{customdata[1]}<br>"
-                    f"{title}: %{{y:.2f}}<br>"
-                    "Rank: %{customdata[2]} of %{customdata[3]}"
-                    "<extra></extra>"
-                ),
-                showlegend=False,
-            ),
-            row=1,
-            col=col,
-        )
-        fig.update_xaxes(title_text="Benchmark year", row=1, col=col)
-        fig.update_yaxes(title_text="Value", row=1, col=col)
-
-    fig.update_layout(
-        title="Municipal distributions over time",
-        margin={"r": 16, "t": 70, "l": 12, "b": 48},
-        autosize=True,
-        font={"family": "Arial, sans-serif"},
-        plot_bgcolor="#ffffff",
-    )
-    fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.12)")
-    path = VIS_DIR / "dk_municipal_distribution.html"
-    return write_plotly_html(fig, path)
 
 
 def load_geojson() -> dict[str, Any]:
@@ -860,21 +721,17 @@ def plot_map(panel: pd.DataFrame) -> Path:
 
 
 def plot_rank_comparison(panel: pd.DataFrame, top_n: int = 12) -> Path:
-    latest_year = latest_year_with(panel, ["Gini", "Poverty60", "UnemploymentRate"])
+    year = latest_year_with(panel, ["Gini", "Poverty60", "UnemploymentRate"])
     data = municipal_rows(panel)
     data = data[
-        data["Gini"].notna()
+        (data["Year"] == year)
+        & data["Gini"].notna()
         & data["Poverty60"].notna()
         & data["UnemploymentRate"].notna()
     ].copy()
 
-    available_years = sorted(int(year) for year in data["Year"].dropna().unique())
-    preferred_years = [2010, 2020, latest_year]
-    years = [year for year in preferred_years if year in available_years]
-    years = sorted(dict.fromkeys(years))
-    if not years:
-        years = [latest_year]
-    active_year = latest_year if latest_year in years else years[-1]
+    top_gini = data.nlargest(top_n, "Gini").sort_values("Gini")
+    top_poverty = data.nlargest(top_n, "Poverty60").sort_values("Poverty60")
 
     fig = make_subplots(
         rows=1,
@@ -885,104 +742,61 @@ def plot_rank_comparison(panel: pd.DataFrame, top_n: int = 12) -> Path:
             "Highest risk of poverty",
         ),
     )
-
-    color_min = float(data[data["Year"].isin(years)]["UnemploymentRate"].min())
-    color_max = float(data[data["Year"].isin(years)]["UnemploymentRate"].max())
     marker = {
         "coloraxis": "coloraxis",
         "line": {"color": "rgba(255,255,255,0.9)", "width": 0.8},
     }
-
-    for year in years:
-        year_data = data[data["Year"] == year]
-        top_gini = year_data.nlargest(top_n, "Gini").sort_values("Gini")
-        top_poverty = year_data.nlargest(top_n, "Poverty60").sort_values("Poverty60")
-        visible = year == active_year
-        fig.add_trace(
-            go.Bar(
-                x=top_gini["Gini"],
-                y=top_gini["Municipality"],
-                orientation="h",
-                marker={**marker, "color": top_gini["UnemploymentRate"]},
-                customdata=top_gini[["Poverty60", "UnemploymentRate"]].to_numpy(),
-                hovertemplate=(
-                    "<b>%{y}</b><br>"
-                    f"Year: {year}<br>"
-                    "Gini: %{x:.2f}<br>"
-                    "Poverty60: %{customdata[0]:.1f}%<br>"
-                    "Unemployment: %{customdata[1]:.2f}%"
-                    "<extra></extra>"
-                ),
-                name=f"Gini, {year}",
-                visible=visible,
+    fig.add_trace(
+        go.Bar(
+            x=top_gini["Gini"],
+            y=top_gini["Municipality"],
+            orientation="h",
+            marker={**marker, "color": top_gini["UnemploymentRate"]},
+            customdata=top_gini[["Poverty60", "UnemploymentRate"]].to_numpy(),
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Gini: %{x:.2f}<br>"
+                "Poverty60: %{customdata[0]:.1f}%<br>"
+                "Unemployment: %{customdata[1]:.2f}%"
+                "<extra></extra>"
             ),
-            row=1,
-            col=1,
-        )
-        fig.add_trace(
-            go.Bar(
-                x=top_poverty["Poverty60"],
-                y=top_poverty["Municipality"],
-                orientation="h",
-                marker={**marker, "color": top_poverty["UnemploymentRate"]},
-                customdata=top_poverty[["Gini", "UnemploymentRate"]].to_numpy(),
-                hovertemplate=(
-                    "<b>%{y}</b><br>"
-                    f"Year: {year}<br>"
-                    "Poverty60: %{x:.1f}%<br>"
-                    "Gini: %{customdata[0]:.2f}<br>"
-                    "Unemployment: %{customdata[1]:.2f}%"
-                    "<extra></extra>"
-                ),
-                name=f"Poverty60, {year}",
-                visible=visible,
+            name="Gini",
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=top_poverty["Poverty60"],
+            y=top_poverty["Municipality"],
+            orientation="h",
+            marker={**marker, "color": top_poverty["UnemploymentRate"]},
+            customdata=top_poverty[["Gini", "UnemploymentRate"]].to_numpy(),
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Poverty60: %{x:.1f}%<br>"
+                "Gini: %{customdata[0]:.2f}<br>"
+                "Unemployment: %{customdata[1]:.2f}%"
+                "<extra></extra>"
             ),
-            row=1,
-            col=2,
-        )
+            name="Poverty60",
+        ),
+        row=1,
+        col=2,
+    )
 
     fig.update_xaxes(title_text="Gini coefficient", row=1, col=1)
     fig.update_xaxes(title_text="Risk-of-poverty rate", ticksuffix="%", row=1, col=2)
-    buttons = []
-    for index, year in enumerate(years):
-        visible = [False] * (len(years) * 2)
-        visible[index * 2] = True
-        visible[index * 2 + 1] = True
-        buttons.append(
-            {
-                "label": str(year),
-                "method": "update",
-                "args": [
-                    {"visible": visible},
-                    {"title": {"text": f"Where inequality and hardship split, {year}"}},
-                ],
-            }
-        )
-
     fig.update_layout(
-        title=f"Where inequality and hardship split, {active_year}",
-        margin={"r": 16, "t": 96, "l": 12, "b": 48},
+        title=f"Where inequality and hardship split, {year}",
+        margin={"r": 16, "t": 70, "l": 12, "b": 48},
         autosize=True,
         font={"family": "Arial, sans-serif"},
         showlegend=False,
         coloraxis={
             "colorscale": "Tealrose",
-            "cmin": color_min,
-            "cmax": color_max,
             "colorbar": {"title": "Unemployment"},
         },
-        updatemenus=[
-            {
-                "type": "buttons",
-                "direction": "right",
-                "active": years.index(active_year),
-                "x": 0,
-                "xanchor": "left",
-                "y": 1.16,
-                "yanchor": "top",
-                "buttons": buttons,
-            }
-        ],
     )
     path = VIS_DIR / "dk_inequality_poverty_rank.html"
     return write_plotly_html(fig, path)
@@ -1066,7 +880,7 @@ def calculate_correlation_over_time(panel: pd.DataFrame) -> pd.DataFrame:
     return results
 
 
-def plot_correlation_over_time_static(correlations: pd.DataFrame) -> Path:
+def plot_correlation_over_time(correlations: pd.DataFrame) -> Path:
     data = correlations.dropna(subset=["r2"]).copy()
     if data.empty:
         raise ValueError("No over-time correlation rows available to plot.")
@@ -1103,66 +917,6 @@ def plot_correlation_over_time_static(correlations: pd.DataFrame) -> Path:
     return path
 
 
-def plot_correlation_over_time(correlations: pd.DataFrame) -> Path:
-    data = correlations.dropna(subset=["r2"]).copy()
-    if data.empty:
-        raise ValueError("No over-time correlation rows available to plot.")
-
-    colors = {
-        "Gini vs Poverty60": "#1f6f8b",
-        "Poverty60 vs UnemploymentRate": "#b65f2a",
-    }
-
-    fig = go.Figure()
-    for relationship, group in data.groupby("relationship", sort=False):
-        group = group.sort_values("Year")
-        customdata = np.column_stack(
-            [
-                group["n"].astype(int),
-                group["r"].round(3),
-                group["p_value"].round(4),
-            ]
-        )
-        fig.add_trace(
-            go.Scatter(
-                x=group["Year"],
-                y=group["r2"],
-                mode="lines+markers",
-                name=relationship,
-                line={"color": colors.get(relationship, "#5b6770"), "width": 2.4},
-                marker={"size": 6},
-                customdata=customdata,
-                hovertemplate=(
-                    "<b>%{fullData.name}</b><br>"
-                    "Year: %{x}<br>"
-                    "R2: %{y:.3f}<br>"
-                    "r: %{customdata[1]:.3f}<br>"
-                    "n: %{customdata[0]}<br>"
-                    "p-value: %{customdata[2]:.4f}"
-                    "<extra></extra>"
-                ),
-            )
-        )
-
-    fig.update_layout(
-        title="The main relationships over time",
-        margin={"r": 16, "t": 58, "l": 12, "b": 36},
-        autosize=True,
-        font={"family": "Arial, sans-serif"},
-        hovermode="x unified",
-        legend={"orientation": "h", "y": -0.18},
-        xaxis={"title": "Year"},
-        yaxis={
-            "title": "Cross-sectional R2",
-            "range": [0, min(1.0, max(0.65, float(data["r2"].max()) + 0.08))],
-        },
-        plot_bgcolor="#ffffff",
-    )
-    fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.12)")
-    path = VIS_DIR / "dk_correlation_robustness.html"
-    return write_plotly_html(fig, path)
-
-
 def plot_scatter(panel: pd.DataFrame) -> Path:
     year = latest_year_with(panel, ["Poverty60", "UnemploymentRate"])
     data = municipal_rows(panel)
@@ -1172,155 +926,49 @@ def plot_scatter(panel: pd.DataFrame) -> Path:
         & data["UnemploymentRate"].notna()
     ].copy()
 
-    relationships = [
-        {
-            "button": "Poverty vs unemployment",
-            "title": f"Municipal poverty and unemployment, {year}",
-            "x": "Poverty60",
-            "y": "UnemploymentRate",
-            "x_label": "Risk-of-poverty rate, 60 percent threshold",
-            "y_label": "Unemployment rate",
-            "color": "Gini",
-            "color_label": "Gini",
+    fig = px.scatter(
+        data,
+        x="Poverty60",
+        y="UnemploymentRate",
+        color="Gini" if data["Gini"].notna().any() else None,
+        hover_name="Municipality",
+        hover_data={
+            "MunicipalityCode": False,
+            "Gini": ":.2f",
+            "Poverty60": ":.2f",
+            "UnemploymentRate": ":.2f",
+            "TertiaryShare": ":.2f",
+            "LifeExpectancy": ":.2f",
         },
-        {
-            "button": "Gini vs poverty",
-            "title": f"Municipal Gini and poverty, {year}",
-            "x": "Gini",
-            "y": "Poverty60",
-            "x_label": "Gini coefficient",
-            "y_label": "Risk-of-poverty rate, 60 percent threshold",
-            "color": "UnemploymentRate",
-            "color_label": "Unemployment",
+        title=f"Municipal poverty and unemployment, {year}",
+        labels={
+            "Gini": "Gini coefficient",
+            "Poverty60": "Risk-of-poverty rate, 60 percent threshold",
+            "UnemploymentRate": "Unemployment rate",
         },
-    ]
+        color_continuous_scale="Tealrose",
+    )
 
-    fig = go.Figure()
-    buttons = []
-    for index, relationship in enumerate(relationships):
-        x = relationship["x"]
-        y = relationship["y"]
-        color = relationship["color"]
-        subset = data.dropna(subset=[x, y, color]).copy()
-        customdata = np.column_stack(
-            [
-                subset["Municipality"],
-                subset["Gini"].round(2),
-                subset["Poverty60"].round(2),
-                subset["UnemploymentRate"].round(2),
-                subset["TertiaryShare"].round(2),
-                subset["LifeExpectancy"].round(2),
-            ]
-        )
-        visible = index == 0
+    summary = regression_summary(data, "Poverty60", "UnemploymentRate")
+    if np.isfinite(summary["slope"]):
+        x_line = np.linspace(data["Poverty60"].min(), data["Poverty60"].max(), 100)
+        y_line = summary["intercept"] + summary["slope"] * x_line
         fig.add_trace(
             go.Scatter(
-                x=subset[x],
-                y=subset[y],
-                mode="markers",
-                name="Municipalities",
-                visible=visible,
-                marker={
-                    "color": subset[color],
-                    "colorscale": "Tealrose",
-                    "showscale": True,
-                    "colorbar": {"title": relationship["color_label"]},
-                    "line": {"color": "rgba(255,255,255,0.85)", "width": 0.7},
-                    "size": 9,
-                    "opacity": 0.9,
-                },
-                customdata=customdata,
-                hovertemplate=(
-                    "<b>%{customdata[0]}</b><br>"
-                    f"{relationship['x_label']}: %{{x:.2f}}<br>"
-                    f"{relationship['y_label']}: %{{y:.2f}}<br>"
-                    "Gini: %{customdata[1]:.2f}<br>"
-                    "Poverty60: %{customdata[2]:.2f}%<br>"
-                    "Unemployment: %{customdata[3]:.2f}%<br>"
-                    "Tertiary share: %{customdata[4]:.2f}%<br>"
-                    "Life expectancy: %{customdata[5]:.2f}"
-                    "<extra></extra>"
-                ),
-                showlegend=False,
+                x=x_line,
+                y=y_line,
+                mode="lines",
+                name=f"Linear fit, R2={summary['r2']:.2f}",
+                line={"color": "#222222", "width": 2},
             )
-        )
-
-        summary = regression_summary(subset, x, y)
-        if np.isfinite(summary["slope"]):
-            x_line = np.linspace(subset[x].min(), subset[x].max(), 100)
-            y_line = summary["intercept"] + summary["slope"] * x_line
-            fig.add_trace(
-                go.Scatter(
-                    x=x_line,
-                    y=y_line,
-                    mode="lines",
-                    name=f"Linear fit, R2={summary['r2']:.2f}",
-                    visible=visible,
-                    line={"color": "#222222", "width": 2},
-                    hovertemplate=(
-                        f"Linear fit<br>R2: {summary['r2']:.3f}<extra></extra>"
-                    ),
-                )
-            )
-        else:
-            fig.add_trace(
-                go.Scatter(
-                    x=[],
-                    y=[],
-                    mode="lines",
-                    name="Linear fit unavailable",
-                    visible=visible,
-                )
-            )
-
-        visible_flags = [False] * (len(relationships) * 2)
-        visible_flags[index * 2] = True
-        visible_flags[index * 2 + 1] = True
-        buttons.append(
-            {
-                "label": relationship["button"],
-                "method": "update",
-                "args": [
-                    {"visible": visible_flags},
-                    {
-                        "title": {"text": relationship["title"]},
-                        "xaxis": {
-                            "title": {"text": relationship["x_label"]},
-                            "autorange": True,
-                        },
-                        "yaxis": {
-                            "title": {"text": relationship["y_label"]},
-                            "autorange": True,
-                        },
-                    },
-                ],
-            }
         )
 
     fig.update_layout(
-        title=relationships[0]["title"],
-        margin={"r": 16, "t": 96, "l": 12, "b": 12},
+        margin={"r": 16, "t": 58, "l": 12, "b": 12},
         autosize=True,
         font={"family": "Arial, sans-serif"},
         legend={"orientation": "h", "y": -0.2},
-        xaxis={"title": relationships[0]["x_label"]},
-        yaxis={"title": relationships[0]["y_label"]},
-        plot_bgcolor="#ffffff",
-        updatemenus=[
-            {
-                "type": "buttons",
-                "direction": "right",
-                "active": 0,
-                "x": 0,
-                "xanchor": "left",
-                "y": 1.16,
-                "yanchor": "top",
-                "buttons": buttons,
-            }
-        ],
     )
-    fig.update_xaxes(showgrid=True, gridcolor="rgba(0,0,0,0.12)")
-    fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.12)")
     path = VIS_DIR / "dk_poverty_unemployment_scatter.html"
     return write_plotly_html(fig, path)
 
@@ -1377,14 +1025,9 @@ def make_figures(
 ) -> dict[str, Path]:
     outputs = {
         "trend": plot_trend(panel),
-        "trend_static": plot_trend_static(panel),
         "deciles": plot_deciles(deciles),
         "distribution": plot_municipal_distribution(panel),
-        "distribution_static": plot_municipal_distribution_static(panel),
         "correlation_robustness": plot_correlation_over_time(correlations),
-        "correlation_robustness_static": plot_correlation_over_time_static(
-            correlations
-        ),
         "map": plot_map(panel),
         "rank_comparison": plot_rank_comparison(panel),
         "scatter": plot_scatter(panel),
